@@ -122,7 +122,7 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        onFragmentViewStateRestores(savedInstanceState);
+        onFragmentViewStateRestored(savedInstanceState);
     }
 
 
@@ -240,7 +240,7 @@ public abstract class MasterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return onFragmentCreateView(inflater, container, savedInstanceState);
+        return onFragmentViewCreated(onFragmentCreateView(inflater, container, savedInstanceState));
     }
 
 
@@ -613,7 +613,7 @@ public abstract class MasterFragment extends Fragment {
      * @param savedInstanceState If the fragment is being re-created from
      *                           a previous saved state, this is the state.
      */
-    protected abstract void onFragmentViewStateRestores(Bundle savedInstanceState);
+    protected abstract void onFragmentViewStateRestored(Bundle savedInstanceState);
 
     /**
      * Called when the Fragment is visible to the user.  This is generally
@@ -637,6 +637,13 @@ public abstract class MasterFragment extends Fragment {
      */
     @Deprecated
     protected abstract void onFragmentAttach(Activity activity);
+
+    /**
+     * Return the layout resource id of the fragment
+     *
+     * @return layout resid
+     */
+    protected abstract int getFragmentLayout();
 
     /**
      * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
@@ -669,6 +676,14 @@ public abstract class MasterFragment extends Fragment {
      * @return Return the View for the fragment's UI, or null.
      */
     protected abstract View onFragmentCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+
+    /**
+     * Initializes all the views in a fragment
+     *
+     * @param view
+     * @return
+     */
+    protected abstract View onFragmentViewCreated(View view);
 
     /**
      * Called when a fragment loads an animation.
