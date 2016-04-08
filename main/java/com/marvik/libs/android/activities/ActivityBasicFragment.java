@@ -2,11 +2,10 @@ package com.marvik.libs.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.SharedElementCallback;
 import android.view.Menu;
 import android.view.MenuItem;
+
 
 /**
  * Created by victor on 4/8/2016.
@@ -49,15 +48,7 @@ public abstract class ActivityBasicFragment extends MaterialActivity {
     }
 
 
-    /**
-     * Called when a fragment is attached to the activity.
-     *
-     * @param fragment
-     */
-    @Override
-    protected void onFragmentAttachedToActivity(Fragment fragment) {
 
-    }
 
     /**
      * When { ActivityOptions makeSceneTransitionAnimation(Activity,
@@ -285,30 +276,8 @@ public abstract class ActivityBasicFragment extends MaterialActivity {
 
     }
 
-    /**
-     * Called by Fragment.startActivityForResult() to implement its behavior.
-     *
-     * @param fragment
-     * @param intent
-     * @param requestCode
-     */
-    @Override
-    protected void onStartActivityFromFragment(Fragment fragment, Intent intent, int requestCode) {
 
-    }
 
-    /**
-     * Called by Fragment.startActivityForResult() to implement its behavior.
-     *
-     * @param fragment
-     * @param intent
-     * @param requestCode
-     * @param options
-     */
-    @Override
-    protected void onStartActivityFromFragment(Fragment fragment, Intent intent, int requestCode, Bundle options) {
-
-    }
 
     /**
      * When { ActivityOptions makeSceneTransitionAnimation(Activity,
