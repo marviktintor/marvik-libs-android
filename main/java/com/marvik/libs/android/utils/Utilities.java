@@ -36,9 +36,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.marvik.libs.android.R;
 import com.marvik.libs.android.accounts.UserAccountsManager;
 import com.marvik.libs.android.database.utils.DatabaseUtilities;
-import com.marvik.libs.android.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -113,65 +113,155 @@ public class Utilities {
         return true;
     }
 
+    /**
+     * Starts an activity
+     *
+     * @param cls
+     */
     public void startActivity(Class<? extends Activity> cls) {
         startActivity(cls, new Bundle(), 0);
     }
 
+    /**
+     * Starts an activity using the provided action
+     *
+     * @param action
+     * @param cls
+     */
     public void startActivity(String action, Class<? extends Activity> cls) {
         startActivity(action, cls, new Bundle(), 0);
     }
 
+    /**
+     * Starts an activity with the passed bundle
+     *
+     * @param cls
+     * @param bundle
+     */
     public void startActivity(Class<? extends Activity> cls, @NonNull Bundle bundle) {
         startActivity(cls, bundle, 0);
     }
 
+    /**
+     * Starts an activity with the passed flags
+     *
+     * @param cls
+     * @param flags
+     */
     public void startActivity(Class<? extends Activity> cls, int flags) {
         startActivity(cls, new Bundle(), flags);
     }
 
-
+    /**
+     * Starts a bundled flagged activity
+     *
+     * @param cls
+     * @param extras
+     * @param flags
+     */
     public void startActivity(Class<? extends Activity> cls, @NonNull Bundle extras, int flags) {
         startActivity(Intent.ACTION_MAIN, cls, extras, flags);
     }
 
+    /**
+     * Starts a flagged activity with a custom action
+     *
+     * @param action
+     * @param cls
+     * @param flags
+     */
     public void startActivity(String action, Class<? extends Activity> cls, int flags) {
         startActivity(action, cls, new Bundle(), flags);
     }
 
+    /**
+     * Starts a bundled flagged activity with a custom action
+     *
+     * @param action
+     * @param cls
+     * @param extras
+     * @param flags
+     */
     public void startActivity(String action, Class<? extends Activity> cls, @NonNull Bundle extras, int flags) {
-
         getContext().startActivity(new Intent(getContext(), cls).addFlags(flags).putExtras(extras).setAction(action));
     }
 
-
+    /**
+     * Starts a service
+     *
+     * @param cls
+     */
     public void startService(Class<? extends Service> cls) {
         startService(cls, new Bundle(), 0);
     }
 
+    /**
+     * Starts a bundled service
+     *
+     * @param cls
+     * @param bundle
+     */
     public void startService(Class<? extends Service> cls, @NonNull Bundle bundle) {
         startService(cls, bundle, 0);
     }
 
+    /**
+     * Starts a flagged service
+     *
+     * @param cls
+     * @param flags
+     */
     public void startService(Class<? extends Service> cls, int flags) {
         startService(cls, new Bundle(), flags);
     }
 
+    /**
+     * Starts a bundled flagged service
+     *
+     * @param cls
+     * @param extras
+     * @param flags
+     */
     public void startService(Class<? extends Service> cls, @NonNull Bundle extras, int flags) {
         getContext().startService(new Intent(getContext(), cls).addFlags(flags).putExtras(extras));
     }
 
+    /**
+     * Stops a service
+     *
+     * @param cls
+     */
     public void stopService(Class<? extends Service> cls) {
         stopService(cls, new Bundle(), 0);
     }
 
+    /**
+     * Stops a bundled service
+     *
+     * @param cls
+     * @param bundle
+     */
     public void stopService(Class<? extends Service> cls, @NonNull Bundle bundle) {
         stopService(cls, bundle, 0);
     }
 
+    /**
+     * Stops a flagged service
+     *
+     * @param cls
+     * @param flags
+     */
     public void stopService(Class<? extends Service> cls, int flags) {
         stopService(cls, new Bundle(), flags);
     }
 
+    /**
+     * Stops a bundled flagged service
+     *
+     * @param cls
+     * @param extras
+     * @param flags
+     */
     public void stopService(Class<? extends Service> cls, @NonNull Bundle extras, int flags) {
         getContext().stopService(new Intent(getContext(), cls).addFlags(flags).putExtras(extras));
     }
@@ -180,62 +270,145 @@ public class Utilities {
     ///////////////////////////// SEND BROADCASTS //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Sends a action main broadcast that requires empty string permission
+     *
+     * @param cls
+     */
     public void sendBroadcast(Class<? extends Activity> cls) {
         getContext().sendBroadcast(new Intent(getContext(), cls).putExtra(Intent.ACTION_MAIN, Intent.ACTION_MAIN), new String(""));
     }
 
+    /**
+     * Broadcasts an action
+     *
+     * @param action
+     */
     public void sendBroadcast(String action) {
         sendBroadcast(action, new Bundle());
 
     }
 
+    /**
+     * Broadcast a bundled action
+     *
+     * @param action
+     * @param extras
+     */
     public void sendBroadcast(String action, @NonNull Bundle extras) {
         sendBroadcast(action, extras, null);
     }
 
+    /**
+     * Broadcast a flagged action
+     *
+     * @param action
+     * @param flags
+     */
     public void sendBroadcast(String action, int flags) {
         sendBroadcast(action, flags, null);
     }
 
+    /**
+     * Broadcasat a flagged bundled action
+     *
+     * @param action
+     * @param extras
+     * @param flags
+     */
     public void sendBroadcast(String action, @NonNull Bundle extras, int flags) {
         sendBroadcast(action, extras, flags, null);
     }
 
-
+    /**
+     * Broadcast a protected action
+     *
+     * @param action
+     * @param permission
+     */
     public void sendBroadcast(String action, String permission) {
         sendBroadcast(action, 0, permission);
     }
 
+    /**
+     * Broadcast a protected bundled action
+     *
+     * @param action
+     * @param extras
+     * @param permission
+     */
     public void sendBroadcast(String action, @NonNull Bundle extras, String permission) {
         sendBroadcast(action, extras, 0, permission);
     }
 
+    /**
+     * Broadcast a protected flagged action
+     *
+     * @param action
+     * @param flags
+     * @param permission
+     */
     public void sendBroadcast(String action, int flags, String permission) {
         sendBroadcast(action, new Bundle(), flags, permission);
     }
 
+    /**
+     * Broadcast a protected bundled action
+     *
+     * @param action
+     * @param extras
+     * @param flags
+     * @param permission
+     */
     public void sendBroadcast(String action, @NonNull Bundle extras, int flags, String permission) {
         getContext().sendBroadcast(new Intent(action).addFlags(flags).putExtras(extras), permission);
     }
 
+    /**
+     * Broadcast a protected intent
+     *
+     * @param intent
+     * @param permission
+     */
     public void sendBroadcast(Intent intent, String permission) {
         getContext().sendBroadcast(intent, permission);
     }
 
+    /**
+     * Broadcast an intent
+     *
+     * @param intent
+     */
     public void sendBroadcast(Intent intent) {
         getContext().sendBroadcast(intent, null);
     }
 
-
+    /**
+     * Get a string in a text view
+     *
+     * @param textView
+     * @return
+     */
     @NonNull
     public String getString(@NonNull TextView textView) {
         return textView.getText().toString();
     }
 
+    /**
+     * Shows a toast
+     *
+     * @param text
+     */
     public void toast(String text) {
         toast(text, Toast.LENGTH_SHORT);
     }
 
+    /**
+     * Shows a custom toast
+     *
+     * @param text
+     * @param duration
+     */
     public void toast(String text, int duration) {
         // TODO Auto-generated method stub
         Toast toast = new Toast(getContext());
@@ -249,6 +422,12 @@ public class Utilities {
         toast.show();
     }
 
+    /**
+     * Checks for null text views
+     *
+     * @param textViews
+     * @return
+     */
     public boolean isEmpty(@NonNull TextView[] textViews) {
         boolean isEmpty = false;
         for (TextView textView : textViews) {
@@ -263,6 +442,12 @@ public class Utilities {
         return isEmpty;
     }
 
+    /**
+     * Parses to an Array
+     *
+     * @param set
+     * @return
+     */
     @NonNull
     public ArrayList<String> formatToArray(@NonNull Set<String> set) {
 
@@ -273,29 +458,60 @@ public class Utilities {
         return arrayList;
     }
 
+    /**
+     * Hides views
+     *
+     * @param views
+     */
     public void hideViews(@NonNull View[] views) {
         for (View view : views) {
             view.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Shows views
+     *
+     * @param views
+     */
     public void showViews(@NonNull View[] views) {
         for (View view : views) {
             view.setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * Reset any Views that extend text view
+     *
+     * @param t
+     * @param <T>
+     */
     public <T extends TextView> void resetInputs(@NonNull T[] t) {
         for (T v : t) {
             v.setText("");
         }
     }
 
-
+    /**
+     * Checks whether a device is connected to the internet
+     *
+     * @param notificationId
+     * @param alert          if not connected
+     * @return
+     */
     public boolean isNetworkConnected(int notificationId, boolean alert) {
         return isNetworkConnected(notificationId, alert, "Network Error", "Action Failed! You are not connected to the Internet");
     }
 
+    /**
+     * Checks if device is connected to the internet and alerts if not
+     *
+     * @param notificationId
+     * @param alert
+     * @param title
+     * @param message
+     * @return
+     */
     public boolean isNetworkConnected(int notificationId, boolean alert, String title, String message) {
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -309,9 +525,16 @@ public class Utilities {
         if (!networkConnected && alert) {
             sendNotification(notificationId, title, message);
         }
-        return true/*networkConnected*/;
+        return networkConnected;
     }
 
+    /**
+     * Sends a notification
+     *
+     * @param notificationId
+     * @param title
+     * @param message
+     */
     private void sendNotification(int notificationId, String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompat = new NotificationCompat.Builder(getContext());
@@ -323,7 +546,14 @@ public class Utilities {
         notificationManager.notify(notificationId, notificationCompat.build());
     }
 
-    public Drawable getUserAvatar(String profilePicUrl) throws FileNotFoundException {
+    /**
+     * Loads images from file system
+     *
+     * @param profilePicUrl
+     * @return
+     * @throws FileNotFoundException
+     */
+    public Drawable getImageFromStorage(String profilePicUrl) throws FileNotFoundException {
 
         if (profilePicUrl == null) {
             return null;
@@ -331,10 +561,27 @@ public class Utilities {
         return Drawable.createFromStream(new FileInputStream(new File(profilePicUrl)), profilePicUrl);
     }
 
+    /**
+     * Show info dialog
+     *
+     * @param title
+     * @param message
+     * @param positiveButtonText
+     * @param intent
+     */
     public void showInfoDialog(String title, String message, String positiveButtonText, Intent intent) {
         showInfoDialog(title, message, Color.RED, positiveButtonText, intent);
     }
 
+    /**
+     * Show info dialog
+     *
+     * @param title
+     * @param message
+     * @param textColor
+     * @param positiveButtonText
+     * @param positiveIntent
+     */
     public void showInfoDialog(String title, String message, int textColor, String positiveButtonText, final Intent positiveIntent) {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(getContext(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         infoDialog.setTitle(title);
@@ -354,7 +601,12 @@ public class Utilities {
         Log.i("DIALOG", "SHOWING");
     }
 
-
+    /**
+     * Get bitmap from file system
+     *
+     * @param fileUri
+     * @return
+     */
     public Bitmap getFileBitmap(String fileUri) {
 
 
@@ -372,6 +624,14 @@ public class Utilities {
         return bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.error_icon);
     }
 
+    /**
+     * Show progress dialog
+     *
+     * @param title
+     * @param message
+     * @param cancelable
+     * @return
+     */
     public ProgressDialog showCustomProgressDialog(String title, String message, boolean cancelable) {
         ProgressDialog mDialog = new ProgressDialog(getContext(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         mDialog.setTitle(title);
@@ -381,10 +641,23 @@ public class Utilities {
         return mDialog;
     }
 
+    /**
+     * Get an asset
+     *
+     * @param assetPath
+     * @return
+     * @throws IOException
+     */
     public InputStream getAsset(String assetPath) throws IOException {
         return getContext().getResources().getAssets().open(assetPath);
     }
 
+    /**
+     * Reads a String stream from the assets
+     *
+     * @param assetFilePath
+     * @return
+     */
     public String readAssetsStringStream(String assetFilePath) {
         try {
             InputStream inputStream = getAsset(assetFilePath);
@@ -402,14 +675,33 @@ public class Utilities {
         return null;
     }
 
+    /**
+     * Gets a resorce
+     *
+     * @return
+     */
     public Resources getResources() {
         return getContext().getResources();
     }
 
+    /**
+     * Gets a string resource
+     *
+     * @param resId
+     * @return
+     */
     public String getString(@StringRes int resId) {
         return getResources().getString(resId);
     }
 
+    /**
+     * Commit preference
+     *
+     * @param editor
+     * @param preference
+     * @param preferenceType
+     * @param <T>
+     */
     public <T> void commit(SharedPreferences.Editor editor, String preference, T preferenceType) {
 
 
@@ -431,6 +723,16 @@ public class Utilities {
         editor.commit();
     }
 
+    /**
+     * Read preferences
+     *
+     * @param sharedPreferences
+     * @param preference
+     * @param preferenceType
+     * @param defaultValue
+     * @param <T>
+     * @return
+     */
     public <T> T read(SharedPreferences sharedPreferences, String preference, Class<T> preferenceType, T defaultValue) {
 
 
@@ -453,6 +755,12 @@ public class Utilities {
         return null;
     }
 
+    /**
+     * Checks if a service is running
+     *
+     * @param serviceClass
+     * @return
+     */
     public boolean isServiceRunning(String serviceClass) {
         if (serviceClass == null) {
             return false;
@@ -469,6 +777,13 @@ public class Utilities {
         return running;
     }
 
+    /**
+     * Gets a String [] of json objects from a json array
+     *
+     * @param jsonArray
+     * @return
+     * @throws JSONException
+     */
     public JSONObject[] getJSONObjects(String jsonArray) throws JSONException {
         JSONArray array = new JSONArray(jsonArray);
         JSONObject[] jsonObjects = new JSONObject[jsonArray.length()];
@@ -520,19 +835,38 @@ public class Utilities {
         Log.i(tag, message, throwable);
     }
 
+    /**
+     * Get device name
+     *
+     * @return device product name
+     */
     public String getDeviceName() {
         return Build.PRODUCT;
     }
 
+    /**
+     * Get device model
+     *
+     * @return device model
+     */
     public String getDeviceModel() {
         return Build.MODEL;
     }
 
+    /**
+     * Get device version
+     *
+     * @return device version
+     */
     public String getDeviceVersion() {
         return Build.VERSION.RELEASE;
     }
 
-
+    /**
+     * Get connected Google Accounts
+     *
+     * @return
+     */
     public String getConnectedGoogleAccountEmail() {
         String connectedGoogleAccountEmail = "";
         AccountManager accountManager = (AccountManager) getContext().getSystemService(Context.ACCOUNT_SERVICE);
@@ -548,6 +882,11 @@ public class Utilities {
         return connectedGoogleAccountEmail;
     }
 
+    /**
+     * Get line 1 phone number
+     *
+     * @return
+     */
     public String getLine1Number() {
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         return telephonyManager.getLine1Number();
@@ -636,6 +975,13 @@ public class Utilities {
         return duration;
     }
 
+    /**
+     * Create an home screen shortcut
+     *
+     * @param launchIntent
+     * @param shortcutIcon
+     * @param shortcutLabel
+     */
     public void createHomesScreenShortcut(Intent launchIntent, int shortcutIcon, String shortcutLabel) {
 
 
@@ -661,6 +1007,14 @@ public class Utilities {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(new Date(timeMillis));
     }
 
+    /**
+     * Show simple snack bar with  message and action text
+     *
+     * @param view
+     * @param text
+     * @param actionText
+     * @param action
+     */
     public void showSimpleSnackBar(View view, String text, String actionText, @NonNull final Intent action) {
         Snackbar snackbar =
                 Snackbar.make(view, text, Snackbar.LENGTH_LONG);
@@ -678,20 +1032,46 @@ public class Utilities {
         snackbar.show();
     }
 
+    /**
+     * Show simple snack bar
+     *
+     * @param view
+     * @param text
+     */
     public void showSimpleSnackBar(View view, String text) {
         showSimpleSnackBar(view, text, null, null);
     }
 
+    /**
+     * Start repeating alarm
+     *
+     * @param requestCode
+     * @param intent
+     * @param triggerAtMillis
+     * @param intervalMillis
+     */
     public void startRepeatingAlarm(int requestCode, Intent intent, long triggerAtMillis, long intervalMillis) {
         PendingIntent pendingintent = PendingIntent.getBroadcast(getContext(), requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         startRepeatingAlarm(triggerAtMillis, intervalMillis, pendingintent);
     }
 
+    /**
+     * Start repeating alarm
+     *
+     * @param triggerAtMillis
+     * @param intervalMillis
+     * @param operation
+     */
     public void startRepeatingAlarm(long triggerAtMillis, long intervalMillis, PendingIntent operation) {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, intervalMillis, operation);
     }
 
+    /**
+     * Stop repeating alarm
+     *
+     * @param operation
+     */
     public void stopRepeatingAlarm(PendingIntent operation) {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(operation);
