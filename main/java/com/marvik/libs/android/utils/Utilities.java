@@ -535,7 +535,7 @@ public class Utilities {
      * @param title
      * @param message
      */
-    private void sendNotification(int notificationId, String title, String message) {
+    public void sendNotification(int notificationId, String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompat = new NotificationCompat.Builder(getContext());
         notificationCompat.build();

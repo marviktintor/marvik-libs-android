@@ -646,18 +646,6 @@ public abstract class MasterFragment extends Fragment {
     protected abstract int getFragmentLayout();
 
     /**
-     * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
-     * has returned, but before any saved state has been restored in to the view.
-     * This gives subclasses a chance to initialize themselves once
-     * they know their view hierarchy has been completely created.  The fragment's
-     * view hierarchy is not however attached to its parent at this point.
-     *
-     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     */
-    protected abstract void onFragmentViewCreated(View view, Bundle savedInstanceState);
-
-    /**
      * Called to have the fragment instantiate its user interface view.
      * This is optional, and non-graphical fragments can return null (which
      * is the default implementation).  This will be called between
@@ -684,6 +672,18 @@ public abstract class MasterFragment extends Fragment {
      * @return
      */
     protected abstract View onFragmentViewCreated(View view);
+
+    /**
+     * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
+     * has returned, but before any saved state has been restored in to the view.
+     * This gives subclasses a chance to initialize themselves once
+     * they know their view hierarchy has been completely created.  The fragment's
+     * view hierarchy is not however attached to its parent at this point.
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     */
+    protected abstract void onFragmentViewCreated(View view, Bundle savedInstanceState);
 
     /**
      * Called when a fragment loads an animation.
