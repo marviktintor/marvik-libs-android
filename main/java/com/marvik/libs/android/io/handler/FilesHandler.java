@@ -4,9 +4,8 @@ import com.marvik.libs.android.io.reader.FileStreamReader;
 import com.marvik.libs.android.io.writer.FileStreamWriter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-
-
 
 
 public class FilesHandler {
@@ -70,6 +69,24 @@ public class FilesHandler {
      */
     public void writeStream(File file, String text) throws IOException {
         getFileStreamWriter().writeStream(file, text);
+    }
+
+    public void writeStream(final File file, final byte[] data) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    fileOutputStream.write(data, 0, data.length);
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
     }
 
     /**
@@ -160,7 +177,9 @@ public class FilesHandler {
     public void copyFile(String from, String to) {
         fileStreamWriter.copyFile(from, to);
 
-    } /**
+    }
+
+    /**
      * Copy a file to a new file path
      *
      * @param from
@@ -170,5 +189,4 @@ public class FilesHandler {
         fileStreamWriter.copyFile(from, to);
 
     }
-
 }
