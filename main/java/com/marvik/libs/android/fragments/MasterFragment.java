@@ -240,7 +240,7 @@ public abstract class MasterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return onFragmentViewCreated(onFragmentCreateView(inflater, container, savedInstanceState));
+        return onFragmentViewCreate(onFragmentCreateView(inflater, container, savedInstanceState));
     }
 
 
@@ -671,7 +671,7 @@ public abstract class MasterFragment extends Fragment {
      * @param view
      * @return
      */
-    protected abstract View onFragmentViewCreated(View view);
+    protected abstract View onFragmentViewCreate(View view);
 
     /**
      * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
