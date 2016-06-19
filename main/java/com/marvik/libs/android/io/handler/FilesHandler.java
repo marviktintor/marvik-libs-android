@@ -71,7 +71,7 @@ public class FilesHandler {
         getFileStreamWriter().writeStream(file, text);
     }
 
-    public void writeStream(final File file, final byte[] data) {
+    public File writeStream(final File file, final byte[] data) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -86,7 +86,7 @@ public class FilesHandler {
 
             }
         }).start();
-
+        return file;
     }
 
     /**
