@@ -20,10 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.marvik.libs.android.activities.MaterialActivity;
+
 /**
  * Created by victor on 4/8/2016.
  */
 public abstract class MasterFragment extends Fragment {
+
+    private MaterialActivity materialActivity;
+
     /**
      * Supply the construction arguments for this fragment.  This can only
      * be called before the fragment has been attached to its activity; that
@@ -201,6 +206,7 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initLibs();
         onFragmentCreated(savedInstanceState);
     }
 
@@ -240,7 +246,9 @@ public abstract class MasterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return onFragmentViewCreate(onFragmentCreateView(inflater, container, savedInstanceState));
+        View view = onFragmentViewCreate(onFragmentCreateView(inflater, container, savedInstanceState));
+        onFragmentViewsCreated(view, savedInstanceState);
+        return view;
     }
 
 
@@ -257,7 +265,6 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        onFragmentViewCreated(view, savedInstanceState);
     }
 
 
@@ -675,15 +682,12 @@ public abstract class MasterFragment extends Fragment {
 
     /**
      * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
-     * has returned, but before any saved state has been restored in to the view.
-     * This gives subclasses a chance to initialize themselves once
-     * they know their view hierarchy has been completely created.  The fragment's
-     * view hierarchy is not however attached to its parent at this point.
+     * has executed. This is where the views data should be set
      *
      * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      */
-    protected abstract void onFragmentViewCreated(View view, Bundle savedInstanceState);
+    protected abstract void onFragmentViewsCreated(View view, Bundle savedInstanceState);
 
     /**
      * Called when a fragment loads an animation.
@@ -975,4 +979,12 @@ public abstract class MasterFragment extends Fragment {
      * is called after {@link #onDestroy()}.
      */
     protected abstract void onFragmentDetach();
+
+    public MaterialActivity getMaterialActivity() {
+        return materialActivity;
+    }
+
+    private void initLibs() {
+        materialActivity = (MaterialActivity) getActivity();
+    }
 }
