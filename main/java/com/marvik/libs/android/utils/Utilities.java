@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.marvik.libs.android.R;
 import com.marvik.libs.android.accounts.UserAccountsManager;
 import com.marvik.libs.android.database.utils.DatabaseUtilities;
+import com.marvik.libs.android.utils.date.CalendarUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1075,5 +1076,16 @@ public class Utilities {
     public void stopRepeatingAlarm(PendingIntent operation) {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(operation);
+    }
+
+    /**
+     * Get the time in milliseconds of this time
+     *
+     * @param pattern date format
+     * @param time    time to convert
+     * @return timeInMillis
+     */
+    public long parseTime(String pattern, String time) {
+        return CalendarUtils.parseTime(pattern,time);
     }
 }
