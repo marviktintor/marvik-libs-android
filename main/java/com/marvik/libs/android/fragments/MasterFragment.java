@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.marvik.libs.android.activities.MaterialActivity;
+import com.marvik.libs.android.utils.Utilities;
 
 /**
  * Created by victor on 4/8/2016.
@@ -28,6 +29,7 @@ import com.marvik.libs.android.activities.MaterialActivity;
 public abstract class MasterFragment extends Fragment {
 
     private MaterialActivity materialActivity;
+    private Utilities utilities;
 
     /**
      * Supply the construction arguments for this fragment.  This can only
@@ -984,7 +986,12 @@ public abstract class MasterFragment extends Fragment {
         return materialActivity;
     }
 
+    public Utilities getUtilities() {
+        return utilities;
+    }
+
     private void initLibs() {
         materialActivity = (MaterialActivity) getActivity();
+        utilities = new Utilities(getActivity());
     }
 }
