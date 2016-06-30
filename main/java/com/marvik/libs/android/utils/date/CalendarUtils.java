@@ -3,6 +3,8 @@ package com.marvik.libs.android.utils.date;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class CalendarUtils {
     public static String getMonth(int monthOfYear) {
@@ -61,5 +63,15 @@ public class CalendarUtils {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    /**
+     * Formats the passed milliseconds to the defined pattern
+     * @param pattern time/date pattern
+     * @param milliSeconds milliseconds
+     * @return formatted time/date
+     */
+    public static String getFormattedDate(String pattern, long milliSeconds) {
+        return new SimpleDateFormat( pattern,Locale.ENGLISH).format(new Date(milliSeconds));
     }
 }

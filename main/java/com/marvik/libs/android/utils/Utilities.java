@@ -1086,6 +1086,92 @@ public class Utilities {
      * @return timeInMillis
      */
     public long parseTime(String pattern, String time) {
-        return CalendarUtils.parseTime(pattern,time);
+        return CalendarUtils.parseTime(pattern, time);
+    }
+
+    /**
+     * Does date and time calculations and returns a friendly date
+     *
+     * @param millis
+     * @return
+     */
+    public String getFriendlyDate(long millis) {
+
+        int milliSeconds = 1;
+        int seconds = milliSeconds * 1000;
+        int minutes = seconds * 60;
+        int hours = minutes * 60;
+        int days = hours * 24;
+        int weeks = days * 7;
+        int months = (weeks * 4) + 2;
+        int years = months * 12;
+
+        String friendlyDate = "Unknown";
+
+        long currentMillis = System.currentTimeMillis();
+
+        if (millis == currentMillis) {
+            friendlyDate = "now";
+        }
+        // incoming time
+        if (millis > currentMillis) {
+
+            long timeDiff = millis - currentMillis;
+
+            if (timeDiff < years) {
+                if (timeDiff / months == 0) {
+                    friendlyDate = "This month";
+                } else {
+                    friendlyDate = "Less than " + timeDiff / months + " months";
+                }
+
+            } else {
+                friendlyDate = "Less than " + timeDiff / weeks + " weeks";
+            }
+
+            if (timeDiff < months) {
+                if (timeDiff / weeks == 0) {
+                    friendlyDate = "This week";
+                } else {
+                    friendlyDate = timeDiff / weeks + " weeks";
+                }
+
+            } else {
+                friendlyDate = "Less than " + timeDiff / weeks + " weeks";
+            }
+            if (timeDiff < weeks) {
+
+                if (timeDiff / days == 0) {
+                    friendlyDate = "Today";
+                } else {
+                    friendlyDate = timeDiff / days + " days";
+                }
+
+            }
+            if (timeDiff < days) {
+                friendlyDate = timeDiff / hours + " hours";
+            }
+            if (timeDiff < hours) {
+                friendlyDate = timeDiff / minutes + " minutes";
+            }
+            if (timeDiff < minutes) {
+                friendlyDate = timeDiff / seconds + " seconds";
+            }
+            if (timeDiff < seconds) {
+                friendlyDate = "now";
+            }
+
+            if (friendlyDate.equals("Unknown")) {
+                return getDateProperty("EEE dd-MMM", millis);
+            }
+
+        }
+
+        // old time
+        if (millis < currentMillis) {
+            long timeDiff = currentMillis - millis;
+        }
+
+        return friendlyDate;
     }
 }
