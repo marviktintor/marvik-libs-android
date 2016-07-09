@@ -1,6 +1,7 @@
 package com.marvik.libs.android.fragments;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.SharedElementCallback;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.transition.ChangeBounds;
@@ -24,12 +26,17 @@ import com.marvik.libs.android.activities.MaterialActivity;
 import com.marvik.libs.android.utils.Utilities;
 
 /**
+ * MasterFragment
+ * Directly extends the fragment class
+ * A Fragment is a piece of an application's user interface or behavior
+ * that can be placed
  * Created by victor on 4/8/2016.
  */
 public abstract class MasterFragment extends Fragment {
 
     private MaterialActivity materialActivity;
     private Utilities utilities;
+    private Callbacks callbacks;
 
     /**
      * Supply the construction arguments for this fragment.  This can only
@@ -112,6 +119,7 @@ public abstract class MasterFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         onFragmentActivityCreated(savedInstanceState);
+        callbacks.onSetActivityTitle(getActivityTitle());
     }
 
 
@@ -250,6 +258,7 @@ public abstract class MasterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = onFragmentViewCreate(onFragmentCreateView(inflater, container, savedInstanceState));
         onFragmentViewsCreated(view, savedInstanceState);
+        callbacks.onSetActivityTitle(getActivityTitle());
         return view;
     }
 
@@ -276,10 +285,12 @@ public abstract class MasterFragment extends Fragment {
      *
      * @param context
      */
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onFragmentAttach(context);
+        callbacks = (Callbacks) getContext();
     }
 
 
@@ -291,6 +302,7 @@ public abstract class MasterFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         onFragmentAttach(activity);
+        callbacks = (Callbacks) getActivity();
     }
 
     /**
@@ -597,6 +609,13 @@ public abstract class MasterFragment extends Fragment {
     protected abstract void onFragmentCreated(Bundle savedInstanceState);
 
     /**
+     * Override this method to set a custom name of fragment
+     *
+     * @return fragment|activity title
+     */
+    protected abstract String getActivityTitle();
+
+    /**
      * Called when the fragment's activity has been created and this
      * fragment's view hierarchy instantiated.  It can be used to do final
      * initialization once these pieces are in place, such as retrieving
@@ -631,6 +650,12 @@ public abstract class MasterFragment extends Fragment {
      */
     protected abstract void onFragmentStart();
 
+    /**
+     * Gets the title of the attached fragment and sets it as the title of the activity
+     *
+     * @return activityTitle
+     */
+    // protected abstract String getActivityTitle();
 
     /**
      * Called when a fragment is first attached to its context.
@@ -993,5 +1018,18 @@ public abstract class MasterFragment extends Fragment {
     private void initLibs() {
         materialActivity = (MaterialActivity) getActivity();
         utilities = new Utilities(getActivity());
+    }
+
+    /**
+     * MasterFragment#Callbacks
+     */
+    public interface Callbacks {
+        /**
+         * Callback called when an activity title is set.
+         * This call back sets the passed activity title as the title of the activity
+         *
+         * @param activityTitle the activity title
+         */
+        void onSetActivityTitle(String activityTitle);
     }
 }

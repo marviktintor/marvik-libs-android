@@ -6,11 +6,13 @@ import android.support.v4.app.SharedElementCallback;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.marvik.libs.android.fragments.BasicFragment;
+
 
 /**
  * Created by victor on 4/8/2016.
  */
-public abstract class ActivityBasicFragment extends MaterialActivity {
+public abstract class ActivityBasicFragment extends MaterialActivity implements BasicFragment.Callbacks{
 
 
     /**

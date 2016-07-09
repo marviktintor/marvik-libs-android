@@ -10,7 +10,8 @@ import android.view.MenuItem;
 /**
  * Created by victor on 4/8/2016.
  */
-public abstract class BasicFragment extends MasterFragment{
+public abstract class BasicFragment extends MasterFragment {
+
     /**
      * Called when a fragment loads an animation.
      *
@@ -115,6 +116,7 @@ public abstract class BasicFragment extends MasterFragment{
     protected void onFragmentCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
     }
+
     /**
      * Configuration changed
      *
@@ -226,5 +228,4 @@ public abstract class BasicFragment extends MasterFragment{
     protected void onSetFragmentExitSharedElementCallback(SharedElementCallback callback) {
 
     }
-
 }

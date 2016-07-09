@@ -13,9 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 /**
+ * MaterialActivity
+ * An Activity class that extends the AppCompatActivity to provide a material theme
  * Created by victor on 4/8/2016.
  */
-public abstract class MaterialActivity extends AppCompatActivity {
+public abstract class MaterialActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -484,6 +486,13 @@ public abstract class MaterialActivity extends AppCompatActivity {
     protected abstract void onActivityStart();
 
     /**
+     * Method called on the onResume of an Activity to get the name of this activity
+     *
+     * @return activityTitle
+     */
+    protected abstract String getActivityTitle();
+
+    /**
      * Called after { #onStop} when the current activity is being
      * re-displayed to the user (the user has navigated back to it).  It will
      * be followed by { #onStart} and then { #onResume}.
@@ -515,6 +524,13 @@ public abstract class MaterialActivity extends AppCompatActivity {
      * { #onResumeFragments()}.
      */
     protected abstract void onActivityResumed();
+
+    /**
+     * Gets the name of this activity and sets it as the title of the activity
+     *
+     * @return activityTitle
+     */
+    //protected abstract String getActivityTitle();
 
     /**
      * Called when a fragment is attached to the activity.
@@ -805,6 +821,17 @@ public abstract class MaterialActivity extends AppCompatActivity {
      */
     public void attachFragment(Fragment fragment) {
         attachFragment(fragment, true);
+    }
+
+    /**
+     * Sets the title of this activity
+     *
+     * @param activityTitle the title
+     */
+    public void setActivityTitle(String activityTitle) {
+        if (activityTitle == null) {
+            setTitle(getString(com.marvik.libs.android.R.string.app_name));
+        } else setTitle(activityTitle);
     }
 }
 
