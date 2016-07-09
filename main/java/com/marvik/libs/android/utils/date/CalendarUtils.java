@@ -49,6 +49,7 @@ public class CalendarUtils {
                 return "Invalid";
         }
     }
+
     /**
      * Get the time in milliseconds of this time
      *
@@ -67,11 +68,22 @@ public class CalendarUtils {
 
     /**
      * Formats the passed milliseconds to the defined pattern
-     * @param pattern time/date pattern
+     *
+     * @param pattern      time/date pattern
      * @param milliSeconds milliseconds
      * @return formatted time/date
      */
     public static String getFormattedDate(String pattern, long milliSeconds) {
-        return new SimpleDateFormat( pattern,Locale.ENGLISH).format(new Date(milliSeconds));
+        return new SimpleDateFormat(pattern, Locale.ENGLISH).format(new Date(milliSeconds));
+    }
+
+    /**
+     * Performs a quick time comparison to determine if the passed timestamp is an incoming time stamp
+     *
+     * @param timeInMillis time stamp to test
+     * @return dateIsIncoming
+     */
+    public static boolean isIncomingDate(long timeInMillis) {
+        return timeInMillis > System.currentTimeMillis();
     }
 }
