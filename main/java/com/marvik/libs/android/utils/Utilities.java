@@ -411,14 +411,13 @@ public class Utilities {
      * @param duration
      */
     public void toast(String text, int duration) {
-        // TODO Auto-generated method stub
         Toast toast = new Toast(getContext());
         TextView view = new TextView(getContext());
         view.setPadding(10, 10, 10, 10);
         view.setBackgroundColor(Color.rgb(180, 180, 180));
         view.setTextColor(Color.BLACK);
         view.setText(text);
-        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setDuration(duration);
         toast.setView(view);
         toast.show();
     }
