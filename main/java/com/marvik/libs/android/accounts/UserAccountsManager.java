@@ -32,7 +32,7 @@ public class UserAccountsManager {
     }
 
 
-    private boolean isAccountExists(String accountType) {
+    public boolean isAccountExists(String accountType) {
         AccountManager accountManager = (AccountManager) getContext().getSystemService(Context.ACCOUNT_SERVICE);
         Account[] accounts = accountManager.getAccounts();
 
@@ -44,8 +44,8 @@ public class UserAccountsManager {
         return false;
     }
 
-    public boolean isExistsUserAccount() {
-        return isAccountExists("account.type");
+    public boolean isExistsUserAccount(String accountType) {
+        return isAccountExists(accountType);
     }
 
     public void forceSync(Account account, String authority) {
