@@ -425,8 +425,8 @@ public class Utilities {
     /**
      * Checks for null text views
      *
-     * @param textViews
-     * @return
+     * @param textViews textViews to validate
+     * @return isEmpty
      */
     public boolean isEmpty(@NonNull TextView[] textViews) {
         boolean isEmpty = false;
@@ -758,8 +758,18 @@ public class Utilities {
     /**
      * Checks if a service is running
      *
-     * @param serviceClass
-     * @return
+     * @param serviceClass the service class
+     * @return isServiceRunning
+     */
+    public boolean isServiceRunning(Class serviceClass) {
+        return isServiceRunning(serviceClass.getName());
+    }
+
+    /**
+     * Checks if a service is running
+     *
+     * @param serviceClass the service class
+     * @return isServiceRunning
      */
     public boolean isServiceRunning(String serviceClass) {
         if (serviceClass == null) {
@@ -774,6 +784,7 @@ public class Utilities {
                 running = true;
             }
         }
+
         return running;
     }
 
