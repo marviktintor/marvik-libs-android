@@ -182,8 +182,8 @@ public abstract class WebServicesProvider {
 
         URL url = new URL(getUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        onConnect(httpURLConnection.getResponseCode());
         httpURLConnection.setRequestMethod("POST");
+        //onConnect(httpURLConnection.getResponseCode());
         httpURLConnection.setDoOutput(true);
         httpURLConnection.setDoInput(true);
 
