@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.marvik.libs.android.utils.Utilities;
+import com.marvik.libs.android.webservices.action.HTTPRequestAction;
 
 import org.json.JSONException;
 
@@ -15,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 
 
 public abstract class WebServicesProvider {
@@ -59,6 +59,9 @@ public abstract class WebServicesProvider {
 
     //url builder to help in building url
     private URLBuilder urlBuilder;
+
+    //Http Request Action
+    private HTTPRequestAction HTTPRequestAction;
 
     /**
      * Web services provide class that provides apis
@@ -212,6 +215,8 @@ public abstract class WebServicesProvider {
 
         onFinishedReadingResponse(dataStream);
 
+        onHTTPResultsSuccessful(dataStream, null, null, null, null);
+
         Log.i("SERVER_RESPONSE", dataStream);
 
         return dataStream;
@@ -305,4 +310,22 @@ public abstract class WebServicesProvider {
      * @param build
      */
     public abstract void onHTTPResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
+
+    /**
+     * Set the HTTP Request Action
+     *
+     * @param HTTPRequestAction the http request action
+     */
+    public void setHTTPRequestAction(HTTPRequestAction HTTPRequestAction) {
+        this.HTTPRequestAction = HTTPRequestAction;
+    }
+
+    /**
+     * Get the HTTP Request Action
+     *
+     * @return HTTPRequestAction
+     */
+    public HTTPRequestAction getHTTPRequestAction() {
+        return HTTPRequestAction;
+    }
 }

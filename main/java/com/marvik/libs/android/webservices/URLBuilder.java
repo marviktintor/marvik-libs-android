@@ -71,7 +71,7 @@ public class URLBuilder {
      * @return
      */
     public String buildUpon() {
-        return getUrl() + getQuery();
+        return getUrl() +"?" + getQuery();
     }
 
     /**
