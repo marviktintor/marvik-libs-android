@@ -4,7 +4,6 @@ package com.marvik.libs.android.webservices;
  * URL Builder
  * <p/>
  * Provides apis for quickly building URLS
- *
  */
 public class URLBuilder {
 
@@ -48,7 +47,6 @@ public class URLBuilder {
      */
     public URLBuilder append(String key, String value) {
         if (getQuery() == null) {
-            query = new String();
             query = key + "=" + value;
         } else {
             query += "&" + key + "=" + value;
@@ -71,7 +69,7 @@ public class URLBuilder {
      * @return
      */
     public String buildUpon() {
-        return getUrl() +"?" + getQuery();
+        return getUrl() + "?" + getQuery();
     }
 
     /**
