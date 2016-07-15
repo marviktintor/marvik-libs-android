@@ -182,13 +182,13 @@ public abstract class WebServicesProvider {
 
         URL url = new URL(getUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        onConnect(httpURLConnection.getResponseCode());
         httpURLConnection.setRequestMethod("POST");
         httpURLConnection.setDoOutput(true);
         httpURLConnection.setDoInput(true);
 
 
         OutputStream outputStream = httpURLConnection.getOutputStream();
-        //onConnect(httpURLConnection.getResponseCode());
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
         dataOutputStream.writeBytes(getQuery());
         dataOutputStream.flush();
