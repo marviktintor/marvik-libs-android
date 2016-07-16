@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -158,7 +159,7 @@ public class ViewsUtils {
 
     /**
      * Creates a snack bar and shows it
-     * <p/>
+     * <p>
      * Nothing happens when the action of the snack bar is clicked
      *
      * @param view       view to bind on
@@ -192,4 +193,51 @@ public class ViewsUtils {
         return emptied;
     }
 
+    /**
+     * Hides the keyboard
+     *
+     * @param binder Supplies the identifying token given to an input method
+     *               when it was started, which allows it to perform this operation on
+     *               itself.
+     */
+    public void hideSoftInputFromInputMethod(View binder) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromInputMethod(binder.getWindowToken(), InputMethodManager.RESULT_HIDDEN);
+    }
+
+    /**
+     * Hides the keyboard
+     *
+     * @param binder The token of the window that is making the request,
+     */
+    public void hideSoftInputFromWindow(View binder) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(binder.getApplicationWindowToken(), InputMethodManager.RESULT_HIDDEN);
+    }
+
+    /**
+     * Show soft input method on a view
+     *
+     * @param view The currently focused view, which would like to receive
+     *             soft keyboard input.
+     */
+    public void showSoftInput(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
+     * Show the input method's soft input area, so the user
+     * sees the input method window and can interact with it.
+     * This can only be called from the currently active input method,
+     * as validated by the given token.
+     *
+     * @param view View that supplies the identifying token given to an input method
+     *             when it was started, which allows it to perform this operation on
+     *             itself.
+     */
+    public void showSoftInputFromInputMethod(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInputFromInputMethod(view.getApplicationWindowToken(), InputMethodManager.SHOW_IMPLICIT);
+    }
 }
