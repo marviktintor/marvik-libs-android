@@ -3,6 +3,7 @@ package com.marvik.libs.android.views.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -159,7 +160,7 @@ public class ViewsUtils {
 
     /**
      * Creates a snack bar and shows it
-     * <p>
+     * <p/>
      * Nothing happens when the action of the snack bar is clicked
      *
      * @param view       view to bind on
@@ -239,5 +240,15 @@ public class ViewsUtils {
     public void showSoftInputFromInputMethod(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInputFromInputMethod(view.getApplicationWindowToken(), InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
+     * Returns a drawable resource
+     *
+     * @param resId drawable id
+     * @return drawable
+     */
+    public Drawable getDrawable(int resId) {
+        return getContext().getResources().getDrawable(resId);
     }
 }
