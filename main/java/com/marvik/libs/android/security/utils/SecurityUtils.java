@@ -38,7 +38,7 @@ public class SecurityUtils {
             byte[] digest = messageDigest.digest();
             StringBuffer stringBuffer = new StringBuffer();
             for (byte _digest : digest) {
-                stringBuffer.append(_digest);
+                stringBuffer.append(Integer.toHexString(_digest & 0xff));
             }
             encryptedText = stringBuffer.toString();
         } catch (NoSuchAlgorithmException e) {
