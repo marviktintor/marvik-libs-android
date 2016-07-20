@@ -1,11 +1,13 @@
 package com.marvik.libs.android.views.utils;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -160,7 +162,7 @@ public class ViewsUtils {
 
     /**
      * Creates a snack bar and shows it
-     * <p/>
+     * <p>
      * Nothing happens when the action of the snack bar is clicked
      *
      * @param view       view to bind on
@@ -250,5 +252,37 @@ public class ViewsUtils {
      */
     public Drawable getDrawable(int resId) {
         return getContext().getResources().getDrawable(resId);
+    }
+
+    /**
+     * Creates an alert dialog
+     *
+     * @param title
+     * @param message
+     * @param positiveButtonText
+     * @param positiveIntent
+     * @param neutralButtonText
+     * @param neutralIntent
+     */
+    public void createAlertDialog(String title, String message, String positiveButtonText, final Intent positiveIntent,
+                                  String neutralButtonText, final Intent neutralIntent) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setTitle(title);
+        alert.setMessage(message);
+        alert.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getContext().sendBroadcast(positiveIntent);
+            }
+        });
+        alert.setNeutralButton(neutralButtonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getContext().sendBroadcast(neutralIntent);
+            }
+        });
+
+        alert.show();
     }
 }
