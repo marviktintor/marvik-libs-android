@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.marvik.libs.android.activities.MaterialActivity;
+import com.marvik.libs.android.net.NetworkUtils;
 import com.marvik.libs.android.utils.Utilities;
 
 /**
@@ -37,6 +38,7 @@ public abstract class MasterFragment extends Fragment {
     private MaterialActivity materialActivity;
     private Utilities utilities;
     private Callbacks callbacks;
+    private NetworkUtils networkUtils;
 
     /**
      * Supply the construction arguments for this fragment.  This can only
@@ -174,7 +176,7 @@ public abstract class MasterFragment extends Fragment {
      * in the Bundle given to {@link #onCreate(Bundle)},
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
      * {@link #onActivityCreated(Bundle)}.
-     * <p/>
+     * <p>
      * <p>This corresponds to {@link Activity#onSaveInstanceState(Bundle)
      * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
      * applies here as well.  Note however: <em>this method may be called
@@ -203,7 +205,7 @@ public abstract class MasterFragment extends Fragment {
      * Called to do initial creation of a fragment.  This is called after
      * {@link #onAttach(Activity)} and before
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p/>
+     * <p>
      * <p>Note that this can be called while the fragment's activity is
      * still in the process of being created.  As such, you can not rely
      * on things like the activity's content view hierarchy being initialized
@@ -240,7 +242,7 @@ public abstract class MasterFragment extends Fragment {
      * This is optional, and non-graphical fragments can return null (which
      * is the default implementation).  This will be called between
      * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
-     * <p/>
+     * <p>
      * <p>If you return a View from here, you will later be called in
      * {@link #onDestroyView} when the view is being released.
      *
@@ -458,7 +460,7 @@ public abstract class MasterFragment extends Fragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p/>
+     * <p>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
@@ -596,7 +598,7 @@ public abstract class MasterFragment extends Fragment {
      * Called to do initial creation of a fragment.  This is called after
      * {@link #onAttach(Activity)} and before
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p/>
+     * <p>
      * <p>Note that this can be called while the fragment's activity is
      * still in the process of being created.  As such, you can not rely
      * on things like the activity's content view hierarchy being initialized
@@ -684,7 +686,7 @@ public abstract class MasterFragment extends Fragment {
      * This is optional, and non-graphical fragments can return null (which
      * is the default implementation).  This will be called between
      * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
-     * <p/>
+     * <p>
      * <p>If you return a View from here, you will later be called in
      * {@link #onDestroyView} when the view is being released.
      *
@@ -750,7 +752,7 @@ public abstract class MasterFragment extends Fragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p/>
+     * <p>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
@@ -918,7 +920,7 @@ public abstract class MasterFragment extends Fragment {
      * in the Bundle given to {@link #onCreate(Bundle)},
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
      * {@link #onActivityCreated(Bundle)}.
-     * <p/>
+     * <p>
      * <p>This corresponds to {@link Activity#onSaveInstanceState(Bundle)
      * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
      * applies here as well.  Note however: <em>this method may be called
@@ -1015,9 +1017,14 @@ public abstract class MasterFragment extends Fragment {
         return utilities;
     }
 
+    public NetworkUtils getNetworkUtils() {
+        return networkUtils;
+    }
+
     private void initLibs() {
         materialActivity = (MaterialActivity) getActivity();
         utilities = new Utilities(getActivity());
+        networkUtils = new NetworkUtils(getActivity());
     }
 
     /**

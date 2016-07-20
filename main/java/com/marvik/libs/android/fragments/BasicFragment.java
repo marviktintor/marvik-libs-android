@@ -8,6 +8,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 /**
+ * BasicFragment
+ * A basic fragment but very powerful
  * Created by victor on 4/8/2016.
  */
 public abstract class BasicFragment extends MasterFragment {
@@ -55,7 +57,7 @@ public abstract class BasicFragment extends MasterFragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p/>
+     * <p>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
