@@ -2,10 +2,14 @@ package com.marvik.libs.android.net;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+
+import com.marvik.libs.android.utils.system.SystemUtilities;
 
 import java.security.cert.X509Certificate;
 import java.util.Locale;
@@ -285,5 +289,40 @@ public class NetworkUtils {
      */
     public String getCertificateSignatureAlgorithmOID(X509Certificate x509Certificate) {
         return x509Certificate.getSigAlgOID();
+    }
+    /**
+     * Checks whether a device is connected to the internet
+     *
+     * @param notificationId
+     * @param alert          if not connected
+     * @return
+     */
+    public boolean isNetworkConnected(int notificationId, boolean alert) {
+        return isNetworkConnected(notificationId, alert, "Network Error", "Action Failed! You are not connected to the Internet");
+    }
+
+    /**
+     * Checks if device is connected to the internet and alerts if not
+     *
+     * @param notificationId
+     * @param alert
+     * @param title
+     * @param message
+     * @return
+     */
+    public boolean isNetworkConnected(int notificationId, boolean alert, String title, String message) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        boolean networkConnected = false;
+
+        if (networkInfo != null) {
+            networkConnected = networkInfo.isAvailable() && networkInfo.isConnected();
+        }
+
+        if (!networkConnected && alert) {
+            new SystemUtilities(getContext()).sendNotification(notificationId, title, message);
+        }
+        return networkConnected;
     }
 }

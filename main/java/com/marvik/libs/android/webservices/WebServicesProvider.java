@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.marvik.libs.android.utils.Utilities;
+import com.marvik.libs.android.utils.system.SystemUtilities;
 import com.marvik.libs.android.webservices.action.HTTPRequestAction;
 
 import org.json.JSONException;
@@ -63,6 +64,8 @@ public abstract class WebServicesProvider {
     //Http Request Action
     private HTTPRequestAction HTTPRequestAction;
 
+    private SystemUtilities systemUtilities;
+
     /**
      * Web services provide class that provides apis
      * for sending requests to the server and has call
@@ -76,6 +79,7 @@ public abstract class WebServicesProvider {
         this.context = context;
         utilities = new Utilities(context);
         urlBuilder = new URLBuilder(url);
+        systemUtilities = new SystemUtilities(getContext());
 
         setQuery(query);
         setUrl(url);
@@ -98,6 +102,15 @@ public abstract class WebServicesProvider {
      */
     public URLBuilder getUrlBuilder() {
         return urlBuilder;
+    }
+
+    /**
+     * Get an handle of the system utils to do core Android functions
+     *
+     * @return systemUtilities
+     */
+    public SystemUtilities getSystemUtilities() {
+        return systemUtilities;
     }
 
     /**
@@ -287,7 +300,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsFailed
-     * <p/>
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -300,7 +313,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsSuccessful
-     * <p/>
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
