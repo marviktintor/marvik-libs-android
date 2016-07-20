@@ -151,7 +151,7 @@ public class NetworkUtils {
 
     /**
      * Pre-shared key for use with WPA-PSK.
-     * <p/>
+     * <p>
      * When the value of this key is read, the actual key is
      * not returned, just a "*" if the key has a value, or the null
      * string otherwise.
@@ -290,6 +290,7 @@ public class NetworkUtils {
     public String getCertificateSignatureAlgorithmOID(X509Certificate x509Certificate) {
         return x509Certificate.getSigAlgOID();
     }
+
     /**
      * Checks whether a device is connected to the internet
      *
@@ -311,6 +312,19 @@ public class NetworkUtils {
      * @return
      */
     public boolean isNetworkConnected(int notificationId, boolean alert, String title, String message) {
+        boolean networkConnected = isNetworkConnected();
+        if (!networkConnected && alert) {
+            new SystemUtilities(getContext()).sendNotification(notificationId, title, message);
+        }
+        return networkConnected;
+    }
+
+    /**
+     * Checks whether the device is connected to a internet connection
+     *
+     * @return isNetworkConnected
+     */
+    public boolean isNetworkConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -318,10 +332,6 @@ public class NetworkUtils {
 
         if (networkInfo != null) {
             networkConnected = networkInfo.isAvailable() && networkInfo.isConnected();
-        }
-
-        if (!networkConnected && alert) {
-            new SystemUtilities(getContext()).sendNotification(notificationId, title, message);
         }
         return networkConnected;
     }
