@@ -17,6 +17,7 @@ public class SystemUtilities {
     private Context context;
 
     public SystemUtilities(Context context) {
+        this.context = context;
     }
 
     public Context getContext() {
