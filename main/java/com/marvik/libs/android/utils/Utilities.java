@@ -994,8 +994,6 @@ public class Utilities {
      * @param shortcutLabel
      */
     public void createHomesScreenShortcut(Intent launchIntent, int shortcutIcon, String shortcutLabel) {
-
-
         Intent intent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
         intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutLabel);
         intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launchIntent);
@@ -1003,7 +1001,16 @@ public class Utilities {
         intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getContext(), shortcutIcon));
         intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
         sendBroadcast(intent);
+    }
 
+    public void deleteHomesScreenShortcut(Intent launchIntent, int shortcutIcon, String shortcutLabel) {
+        Intent intent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutLabel);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launchIntent);
+        intent.putExtra("duplicate", false);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getContext(), shortcutIcon));
+        intent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+        sendBroadcast(intent);
 
     }
 
