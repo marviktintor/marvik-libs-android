@@ -59,6 +59,7 @@ public class SystemUtilities {
     public void sendNotification(int notificationId, int smallIcon, int largeIcon, String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompat = new NotificationCompat.Builder(getContext());
+        notificationCompat.setDefaults(NotificationCompat.DEFAULT_ALL);
         notificationCompat.build();
         notificationCompat.mContentTitle = title;
         notificationCompat.mContentText = message;
