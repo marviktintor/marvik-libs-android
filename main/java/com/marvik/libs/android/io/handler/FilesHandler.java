@@ -189,4 +189,14 @@ public class FilesHandler {
         fileStreamWriter.copyFile(from, to);
 
     }
+
+    /**
+     * Checks if this file exists
+     *
+     * @param file the file
+     * @return isExists
+     */
+    public boolean isExists(File file) {
+        return file.exists();
+    }
 }
