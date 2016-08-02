@@ -819,18 +819,18 @@ public abstract class MaterialActivity extends AppCompatActivity {
                     .commit();
         else
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment).commit();
-        int backStack = getFragmentManager().getBackStackEntryCount();
 
-        return backStack;
+        return  getFragmentManager().getBackStackEntryCount();
     }
 
     /**
      * Attaches a fragment to the parent container
      *
-     * @param fragment
+     * @param fragment to attach
+     * @return backStackEntryCount
      */
-    public void attachFragment(Fragment fragment) {
-        attachFragment(fragment, true);
+    public int attachFragment(Fragment fragment) {
+        return attachFragment(fragment, true);
     }
 
     /**
