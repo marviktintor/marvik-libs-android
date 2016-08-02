@@ -2,6 +2,7 @@ package com.marvik.libs.android.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,7 +18,7 @@ import android.view.View;
  * An Activity class that extends the AppCompatActivity to provide a material theme
  * Created by victor on 4/8/2016.
  */
-public abstract class MaterialActivity extends AppCompatActivity  {
+public abstract class MaterialActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -413,6 +414,11 @@ public abstract class MaterialActivity extends AppCompatActivity  {
     public void onBackPressed() {
         super.onBackPressed();
         onActivityBackPressed();
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            finish();
+        } else {
+            getFragmentManager().popBackStack(this.getClass().getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
 
@@ -802,16 +808,20 @@ public abstract class MaterialActivity extends AppCompatActivity  {
     /**
      * Attaches a fragment to the parent container
      *
-     * @param fragment
+     * @param fragment       to attach
      * @param addToBackStack
+     * @return backStackEntryCount
      */
-    public void attachFragment(Fragment fragment, boolean addToBackStack) {
+    public int attachFragment(Fragment fragment, boolean addToBackStack) {
         if (addToBackStack)
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment)
                     .addToBackStack(fragment.getClass().getCanonicalName())
                     .commit();
         else
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment).commit();
+        int backStack = getFragmentManager().getBackStackEntryCount();
+
+        return backStack;
     }
 
     /**
