@@ -335,4 +335,23 @@ public class NetworkUtils {
         }
         return networkConnected;
     }
+
+    /**
+     * Check the connection of a specific network type
+     *
+     * @param networkType type of network
+     * @return connected
+     */
+    @Deprecated
+    public boolean isNetworkConnected(int networkType) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(networkType);
+
+        boolean networkConnected = false;
+
+        if (networkInfo != null) {
+            networkConnected = networkInfo.isAvailable() && networkInfo.isConnected();
+        }
+        return networkConnected;
+    }
 }
