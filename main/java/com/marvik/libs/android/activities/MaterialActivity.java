@@ -2,7 +2,6 @@ package com.marvik.libs.android.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -412,12 +411,11 @@ public abstract class MaterialActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         onActivityBackPressed();
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            finish();
+        if (getFragmentManager().getBackStackEntryCount() > 1) {
+            getFragmentManager().popBackStack();
         } else {
-            getFragmentManager().popBackStack(this.getClass().getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            finish();
         }
     }
 
@@ -820,7 +818,7 @@ public abstract class MaterialActivity extends AppCompatActivity {
         else
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment).commit();
 
-        return  getFragmentManager().getBackStackEntryCount();
+        return getFragmentManager().getBackStackEntryCount();
     }
 
     /**
