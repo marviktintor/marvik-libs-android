@@ -228,8 +228,6 @@ public abstract class WebServicesProvider {
 
         onFinishedReadingResponse(dataStream);
 
-        onHTTPResultsSuccessful(dataStream, null, null, null, null);
-
         Log.i("SERVER_RESPONSE", dataStream);
 
         return dataStream;
