@@ -3,6 +3,7 @@ package com.marvik.libs.android.utils.system;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 
 import com.marvik.libs.android.R;
@@ -68,4 +69,23 @@ public class SystemUtilities {
         notificationManager.notify(notificationId, notificationCompat.build());
     }
 
+    /**
+     * Vibrate
+     *
+     * @param pattern
+     * @param repeat
+     */
+    public void vibrate(long[] pattern, int repeat) {
+        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(pattern, repeat);
+    }
+
+    /**
+     * Vibarate
+     *
+     * @param pattern
+     */
+    public void vibrate(long[] pattern) {
+        vibrate(pattern, 0);
+    }
 }
