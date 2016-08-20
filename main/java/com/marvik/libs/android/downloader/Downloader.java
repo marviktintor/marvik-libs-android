@@ -17,14 +17,15 @@ public final class Downloader {
 
     private static Context context;
 
-    private Downloader() {}
+    private Downloader() {
+    }
 
     public static Downloader getInstance(Context context) {
         Downloader.context = context;
         return new Downloader();
     }
 
-    public void downloadFile(final String fileUri,final String filePath) {
+    public void downloadFile(final String fileUri, final String filePath) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -34,17 +35,17 @@ public final class Downloader {
                     InputStream inputStream = urlConnection.getInputStream();
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
-                    String filename = fileUri.substring(fileUri.lastIndexOf("/"));
+                    String filename = new File(filePath).getName();
                     int count = 0;
                     byte[] buffer = new byte[1024];
 
-                    File fileDir = new File(filePath);
+                    File fileDir = new File(filePath).getParentFile();
 
                     if (!fileDir.exists()) {
                         fileDir.mkdirs();
                     }
 
-                    File downloadFile = new File(fileDir + filename);
+                    File downloadFile = new File(fileDir + System.getProperty("file.separator") + filename);
 
                     //Ensure that we do not always download existing files
                     if (downloadFile.exists()) {
