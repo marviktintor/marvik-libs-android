@@ -190,7 +190,7 @@ public abstract class WebServicesProvider {
 
         if (!getUtilities().isValidUrl(getUrl())) {
             onConnectionError(ERROR_TYPE_INVALID_URL);
-            throw new NullPointerException("Invalid URL ");
+            throw new NullPointerException("Invalid URL [" +getUrl()+"]");
         }
 
         URL url = new URL(getUrl());
