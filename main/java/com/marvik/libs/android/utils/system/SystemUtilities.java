@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
+import android.telephony.TelephonyManager;
 
 import com.marvik.libs.android.R;
 
@@ -87,5 +88,15 @@ public class SystemUtilities {
      */
     public void vibrate(long[] pattern) {
         vibrate(pattern, 0);
+    }
+
+    /**
+     * Get the line 1 number of the active simcard
+     *
+     * @return line 1 number
+     */
+    public String getLine1Number() {
+        TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager.getLine1Number();
     }
 }
