@@ -86,4 +86,9 @@ public class CalendarUtils {
     public static boolean isIncomingDate(long timeInMillis) {
         return timeInMillis > System.currentTimeMillis();
     }
+
+    public static String getFriendlyTime(long baseTime, long targetTime) {
+        String tense = baseTime > targetTime ? "ago" : "coming";
+        return CalendarUtils.getFormattedDate("hh:mm", (targetTime - baseTime));
+    }
 }

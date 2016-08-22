@@ -1,5 +1,8 @@
 package com.marvik.libs.android.forms.text;
 
+import android.os.Build;
+import android.text.Html;
+
 public class TextFormatter {
 
     /**
@@ -10,6 +13,10 @@ public class TextFormatter {
      * @return html formatted text with the key in bold
      */
     public static String highlightText(String text, String key) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            text = Html.escapeHtml(text);
+
         String newText = "";
 
         int textLength = text.length();
