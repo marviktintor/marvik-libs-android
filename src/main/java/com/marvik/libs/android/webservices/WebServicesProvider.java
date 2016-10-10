@@ -315,7 +315,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsFailed
-     * <p/>
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -328,7 +328,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsSuccessful
-     * <p/>
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
