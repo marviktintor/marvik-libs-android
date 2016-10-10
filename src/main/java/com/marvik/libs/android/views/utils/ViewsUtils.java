@@ -163,7 +163,7 @@ public class ViewsUtils {
 
     /**
      * Creates a snack bar and shows it
-     * <p/>
+     * <p>
      * Nothing happens when the action of the snack bar is clicked
      *
      * @param view       view to bind on
@@ -312,4 +312,5 @@ public class ViewsUtils {
         alert.setCancelable(false);
         alert.show();
     }
+
 }
