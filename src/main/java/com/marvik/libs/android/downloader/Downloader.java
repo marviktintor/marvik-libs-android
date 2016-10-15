@@ -17,41 +17,34 @@ public final class Downloader {
 
     private static Context context;
 
-    private Downloader() {
-    }
+    private Downloader() {}
 
     public static Downloader getInstance(Context context) {
         Downloader.context = context;
         return new Downloader();
     }
 
-    /**
-     * Download a file
-     *
-     * @param fileURL     the file url
-     * @param storagePath the file to be written to disk
-     */
-    public void downloadFile(final String fileURL, final String storagePath) {
+    public void downloadFile(final String fileUri,final String filePath) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL(fileURL);
+                    URL url = new URL(fileUri);
                     URLConnection urlConnection = url.openConnection();
                     InputStream inputStream = urlConnection.getInputStream();
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
-                    String filename = new File(storagePath).getName();
+                    String filename = fileUri.substring(fileUri.lastIndexOf("/"));
                     int count = 0;
                     byte[] buffer = new byte[1024];
 
-                    File fileDir = new File(storagePath).getParentFile();
+                    File fileDir = new File(filePath);
 
                     if (!fileDir.exists()) {
                         fileDir.mkdirs();
                     }
 
-                    File downloadFile = new File(fileDir + System.getProperty("file.separator") + filename);
+                    File downloadFile = new File(fileDir + filename);
 
                     //Ensure that we do not always download existing files
                     if (downloadFile.exists()) {

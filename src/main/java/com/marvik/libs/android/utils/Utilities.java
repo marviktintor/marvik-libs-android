@@ -39,7 +39,6 @@ import android.widget.Toast;
 import com.marvik.libs.android.R;
 import com.marvik.libs.android.accounts.UserAccountsManager;
 import com.marvik.libs.android.database.utils.DatabaseUtilities;
-import com.marvik.libs.android.utils.date.CalendarUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -411,13 +410,14 @@ public class Utilities {
      * @param duration
      */
     public void toast(String text, int duration) {
+        // TODO Auto-generated method stub
         Toast toast = new Toast(getContext());
         TextView view = new TextView(getContext());
         view.setPadding(10, 10, 10, 10);
         view.setBackgroundColor(Color.rgb(180, 180, 180));
         view.setTextColor(Color.BLACK);
         view.setText(text);
-        toast.setDuration(duration);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(view);
         toast.show();
     }
@@ -425,8 +425,8 @@ public class Utilities {
     /**
      * Checks for null text views
      *
-     * @param textViews textViews to validate
-     * @return isEmpty
+     * @param textViews
+     * @return
      */
     public boolean isEmpty(@NonNull TextView[] textViews) {
         boolean isEmpty = false;
@@ -758,18 +758,8 @@ public class Utilities {
     /**
      * Checks if a service is running
      *
-     * @param serviceClass the service class
-     * @return isServiceRunning
-     */
-    public boolean isServiceRunning(Class serviceClass) {
-        return isServiceRunning(serviceClass.getName());
-    }
-
-    /**
-     * Checks if a service is running
-     *
-     * @param serviceClass the service class
-     * @return isServiceRunning
+     * @param serviceClass
+     * @return
      */
     public boolean isServiceRunning(String serviceClass) {
         if (serviceClass == null) {
@@ -784,7 +774,6 @@ public class Utilities {
                 running = true;
             }
         }
-
         return running;
     }
 
@@ -994,6 +983,8 @@ public class Utilities {
      * @param shortcutLabel
      */
     public void createHomesScreenShortcut(Intent launchIntent, int shortcutIcon, String shortcutLabel) {
+
+
         Intent intent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
         intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutLabel);
         intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launchIntent);
@@ -1001,16 +992,7 @@ public class Utilities {
         intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getContext(), shortcutIcon));
         intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
         sendBroadcast(intent);
-    }
 
-    public void deleteHomesScreenShortcut(Intent launchIntent, int shortcutIcon, String shortcutLabel) {
-        Intent intent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutLabel);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launchIntent);
-        intent.putExtra("duplicate", false);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getContext(), shortcutIcon));
-        intent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-        sendBroadcast(intent);
 
     }
 
@@ -1093,102 +1075,5 @@ public class Utilities {
     public void stopRepeatingAlarm(PendingIntent operation) {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(operation);
-    }
-
-    /**
-     * Get the time in milliseconds of this time
-     *
-     * @param pattern date format
-     * @param time    time to convert
-     * @return timeInMillis
-     */
-    public long parseTime(String pattern, String time) {
-        return CalendarUtils.parseTime(pattern, time);
-    }
-
-    /**
-     * Does date and time calculations and returns a friendly date
-     *
-     * @param millis
-     * @return
-     */
-    public String getFriendlyDate(long millis) {
-
-        int milliSeconds = 1;
-        int seconds = milliSeconds * 1000;
-        int minutes = seconds * 60;
-        int hours = minutes * 60;
-        int days = hours * 24;
-        int weeks = days * 7;
-        int months = (weeks * 4) + 2;
-        int years = months * 12;
-
-        String friendlyDate = "Unknown";
-
-        long currentMillis = System.currentTimeMillis();
-
-        if (millis == currentMillis) {
-            friendlyDate = "now";
-        }
-        // incoming time
-        if (millis > currentMillis) {
-
-            long timeDiff = millis - currentMillis;
-
-            if (timeDiff < years) {
-                if (timeDiff / months == 0) {
-                    friendlyDate = "This month";
-                } else {
-                    friendlyDate = "Less than " + timeDiff / months + " months";
-                }
-
-            } else {
-                friendlyDate = "Less than " + timeDiff / weeks + " weeks";
-            }
-
-            if (timeDiff < months) {
-                if (timeDiff / weeks == 0) {
-                    friendlyDate = "This week";
-                } else {
-                    friendlyDate = timeDiff / weeks + " weeks";
-                }
-
-            } else {
-                friendlyDate = "Less than " + timeDiff / weeks + " weeks";
-            }
-            if (timeDiff < weeks) {
-
-                if (timeDiff / days == 0) {
-                    friendlyDate = "Today";
-                } else {
-                    friendlyDate = timeDiff / days + " days";
-                }
-
-            }
-            if (timeDiff < days) {
-                friendlyDate = timeDiff / hours + " hours";
-            }
-            if (timeDiff < hours) {
-                friendlyDate = timeDiff / minutes + " minutes";
-            }
-            if (timeDiff < minutes) {
-                friendlyDate = timeDiff / seconds + " seconds";
-            }
-            if (timeDiff < seconds) {
-                friendlyDate = "now";
-            }
-
-            if (friendlyDate.equals("Unknown")) {
-                return getDateProperty("EEE dd-MMM", millis);
-            }
-
-        }
-
-        // old time
-        if (millis < currentMillis) {
-            long timeDiff = currentMillis - millis;
-        }
-
-        return friendlyDate;
     }
 }

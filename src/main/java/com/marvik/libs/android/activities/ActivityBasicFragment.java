@@ -2,17 +2,14 @@ package com.marvik.libs.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.SharedElementCallback;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.marvik.libs.android.fragments.BasicFragment;
 
 
 /**
  * Created by victor on 4/8/2016.
  */
-public abstract class ActivityBasicFragment extends MaterialActivity implements BasicFragment.Callbacks{
+public abstract class ActivityBasicFragment extends MaterialActivity {
 
 
     /**
@@ -49,21 +46,6 @@ public abstract class ActivityBasicFragment extends MaterialActivity implements 
 
     }
 
-
-
-
-    /**
-     * When { ActivityOptions makeSceneTransitionAnimation(Activity,
-     * View, String)} was used to start an Activity, <var>callback</var>
-     * will be called to handle shared elements on the <i>launched</i> Activity. This requires
-     * { Window FEATURE_CONTENT_TRANSITIONS}.
-     *
-     * @param callback Used to manipulate shared element transitions on the launched Activity.
-     */
-    @Override
-    protected void setEnteringSharedElementCallback(SharedElementCallback callback) {
-
-    }
 
     /**
      * Called when the main window associated with the activity has been
@@ -279,20 +261,6 @@ public abstract class ActivityBasicFragment extends MaterialActivity implements 
     }
 
 
-
-
-    /**
-     * When { ActivityOptions makeSceneTransitionAnimation(Activity,
-     * View, String)} was used to start an Activity, <var>listener</var>
-     * will be called to handle shared elements on the <i>launching</i> Activity. Most
-     * calls will only come when returning from the started Activity.
-     *
-     * @param listener Used to manipulate shared element transitions on the launching Activity.
-     */
-    @Override
-    protected void setExitingSharedElementCallback(SharedElementCallback listener) {
-
-    }
 
     /**
      * Dispatch onStop() to all fragments.  Ensure all loaders are stopped.

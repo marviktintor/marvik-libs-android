@@ -12,18 +12,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.marvik.libs.android.R;
+import com.marvik.libs.android.utils.Utilities;
+
 /**
- * MaterialActivity
- * An Activity class that extends the AppCompatActivity to provide a material theme
  * Created by victor on 4/8/2016.
  */
 public abstract class MaterialActivity extends AppCompatActivity {
+
+    private Utilities utils;
+    private InterstitialAd interstitialAd;
+    private AdRequest adRequest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getActivityContentView());
         onActivityCreated(savedInstanceState);
+        initLibraries();
+        initInterstitialAds();
     }
 
 
@@ -134,6 +144,9 @@ public abstract class MaterialActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         onActivityPaused();
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
+        }
     }
 
 
@@ -411,11 +424,10 @@ public abstract class MaterialActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         onActivityBackPressed();
-        if (getFragmentManager().getBackStackEntryCount() > 1) {
-            getFragmentManager().popBackStack();
-        } else {
-            finish();
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
         }
     }
 
@@ -490,13 +502,6 @@ public abstract class MaterialActivity extends AppCompatActivity {
     protected abstract void onActivityStart();
 
     /**
-     * Method called on the onResume of an Activity to get the name of this activity
-     *
-     * @return activityTitle
-     */
-    protected abstract String getActivityTitle();
-
-    /**
      * Called after { #onStop} when the current activity is being
      * re-displayed to the user (the user has navigated back to it).  It will
      * be followed by { #onStart} and then { #onResume}.
@@ -528,13 +533,6 @@ public abstract class MaterialActivity extends AppCompatActivity {
      * { #onResumeFragments()}.
      */
     protected abstract void onActivityResumed();
-
-    /**
-     * Gets the name of this activity and sets it as the title of the activity
-     *
-     * @return activityTitle
-     */
-    //protected abstract String getActivityTitle();
 
     /**
      * Called when a fragment is attached to the activity.
@@ -806,40 +804,84 @@ public abstract class MaterialActivity extends AppCompatActivity {
     /**
      * Attaches a fragment to the parent container
      *
-     * @param fragment       to attach
+     * @param fragment
      * @param addToBackStack
-     * @return backStackEntryCount
      */
-    public int attachFragment(Fragment fragment, boolean addToBackStack) {
+    public void attachFragment(Fragment fragment, boolean addToBackStack) {
         if (addToBackStack)
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment)
                     .addToBackStack(fragment.getClass().getCanonicalName())
                     .commit();
         else
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment).commit();
-
-        return getFragmentManager().getBackStackEntryCount();
     }
 
     /**
      * Attaches a fragment to the parent container
      *
-     * @param fragment to attach
-     * @return backStackEntryCount
+     * @param fragment
      */
-    public int attachFragment(Fragment fragment) {
-        return attachFragment(fragment, true);
+    public void attachFragment(Fragment fragment) {
+        attachFragment(fragment, true);
     }
 
     /**
-     * Sets the title of this activity
+     * Utilities#getUtilities
      *
-     * @param activityTitle the title
+     * @return an instance of the utils class
      */
-    public void setActivityTitle(String activityTitle) {
-        if (activityTitle == null) {
-            setTitle(getString(com.marvik.libs.android.R.string.app_name));
-        } else setTitle(activityTitle);
+    public Utilities getUtilities() {
+        return utils;
     }
+
+    private void initLibraries() {
+        utils = new Utilities(getApplicationContext());
+    }
+
+    private void initInterstitialAds() {
+        getUtilities().toast("Init Ads");
+        interstitialAd = new InterstitialAd(getApplicationContext());
+        interstitialAd.setAdUnitId(getUtilities().getString(R.string.hackers_wifi_interstitial_ads));
+        adRequest = new AdRequest.Builder().addTestDevice("F356C289C77077346E28F47DA83B0FBD").build();
+        interstitialAd.loadAd(adRequest);
+
+        interstitialAd.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+                getUtilities().toast("Ad Left Application");
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                getUtilities().toast("Ad Opened");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                super.onAdFailedToLoad(errorCode);
+                getUtilities().toast("Ad Failed "+ errorCode);
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                getUtilities().toast("Ad Loaded");
+                interstitialAd.show();
+            }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                getUtilities().toast("Ad Closed");
+                adRequest = new AdRequest.Builder().setRequestAgent(getUtilities().getString(R.string.hackers_wifi_interstitial_ads)).build();
+                interstitialAd.loadAd(adRequest);
+            }
+        });
+
+    }
+
 }
 

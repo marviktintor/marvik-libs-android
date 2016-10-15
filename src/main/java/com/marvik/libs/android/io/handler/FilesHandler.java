@@ -4,11 +4,9 @@ import com.marvik.libs.android.io.reader.FileStreamReader;
 import com.marvik.libs.android.io.writer.FileStreamWriter;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
+
 
 
 public class FilesHandler {
@@ -72,24 +70,6 @@ public class FilesHandler {
      */
     public void writeStream(File file, String text) throws IOException {
         getFileStreamWriter().writeStream(file, text);
-    }
-
-    public File writeStream(final File file, final byte[] data) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    fileOutputStream.write(data, 0, data.length);
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }).start();
-        return file;
     }
 
     /**
@@ -180,9 +160,7 @@ public class FilesHandler {
     public void copyFile(String from, String to) {
         fileStreamWriter.copyFile(from, to);
 
-    }
-
-    /**
+    } /**
      * Copy a file to a new file path
      *
      * @param from
@@ -193,23 +171,4 @@ public class FilesHandler {
 
     }
 
-    /**
-     * Checks if this file exists
-     *
-     * @param file the file
-     * @return isExists
-     */
-    public boolean isExists(File file) {
-        return file.exists();
-    }
-
-    /**
-     * Get the file as an input stream
-     *
-     * @param file to read
-     * @return
-     */
-    public InputStream getFileStream(File file) throws FileNotFoundException {
-        return new FileInputStream(file);
-    }
 }

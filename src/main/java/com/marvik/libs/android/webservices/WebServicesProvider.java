@@ -4,29 +4,18 @@ import android.content.Context;
 import android.util.Log;
 
 import com.marvik.libs.android.utils.Utilities;
-import com.marvik.libs.android.utils.system.SystemUtilities;
-import com.marvik.libs.android.webservices.action.HTTPRequestAction;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.FormBodyPart;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 
 
 public abstract class WebServicesProvider {
@@ -71,14 +60,6 @@ public abstract class WebServicesProvider {
     //url builder to help in building url
     private URLBuilder urlBuilder;
 
-    //Http Request Action
-    private HTTPRequestAction HTTPRequestAction;
-
-    //The HTTP Response
-    private String httpResponse;
-
-    private SystemUtilities systemUtilities;
-
     /**
      * Web services provide class that provides apis
      * for sending requests to the server and has call
@@ -92,7 +73,6 @@ public abstract class WebServicesProvider {
         this.context = context;
         utilities = new Utilities(context);
         urlBuilder = new URLBuilder(url);
-        systemUtilities = new SystemUtilities(getContext());
 
         setQuery(query);
         setUrl(url);
@@ -115,15 +95,6 @@ public abstract class WebServicesProvider {
      */
     public URLBuilder getUrlBuilder() {
         return urlBuilder;
-    }
-
-    /**
-     * Get an handle of the system utils to do core Android functions
-     *
-     * @return systemUtilities
-     */
-    public SystemUtilities getSystemUtilities() {
-        return systemUtilities;
     }
 
     /**
@@ -203,25 +174,23 @@ public abstract class WebServicesProvider {
 
         if (!getUtilities().isValidUrl(getUrl())) {
             onConnectionError(ERROR_TYPE_INVALID_URL);
-            throw new NullPointerException("Invalid URL [" + getUrl() + "]");
+            throw new NullPointerException("Invalid URL ");
         }
 
         URL url = new URL(getUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestMethod("POST");
-        //onConnect(httpURLConnection.getResponseCode());
         httpURLConnection.setDoOutput(true);
         httpURLConnection.setDoInput(true);
 
+
         OutputStream outputStream = httpURLConnection.getOutputStream();
+        //onConnect(httpURLConnection.getResponseCode());
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        if (getQuery() != null) {
-            dataOutputStream.writeBytes(getQuery());
-            onSendQuery();
-        }
+        dataOutputStream.writeBytes(getQuery());
         dataOutputStream.flush();
         dataOutputStream.close();
-
+        onSendQuery();
 
         InputStream inputStream = httpURLConnection.getInputStream();
         onReceiveResponse();
@@ -240,8 +209,6 @@ public abstract class WebServicesProvider {
         }
 
         dataStream = stringBuffer.toString();
-
-        setHTTPResponse(dataStream);
 
         onFinishedReadingResponse(dataStream);
 
@@ -315,7 +282,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsFailed
-     * <p>
+     * <p/>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -328,7 +295,7 @@ public abstract class WebServicesProvider {
 
     /**
      * WebServicesProvider#onHTTPResultsSuccessful
-     * <p>
+     * <p/>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -338,81 +305,4 @@ public abstract class WebServicesProvider {
      * @param build
      */
     public abstract void onHTTPResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
-
-    /**
-     * Set the HTTP Request Action
-     *
-     * @param HTTPRequestAction the http request action
-     */
-    public void setHTTPRequestAction(HTTPRequestAction HTTPRequestAction) {
-        this.HTTPRequestAction = HTTPRequestAction;
-    }
-
-    /**
-     * Get the HTTP Request Action
-     *
-     * @return HTTPRequestAction
-     */
-    public HTTPRequestAction getHTTPRequestAction() {
-        return HTTPRequestAction;
-    }
-
-    public String getHTTPResponse() {
-        return httpResponse;
-    }
-
-    public void setHTTPResponse(String httpResponse) {
-        this.httpResponse = httpResponse;
-    }
-
-    /**
-     * Upload a file to the server
-     *
-     * @param filePath
-     * @return
-     */
-    public String uploadFile(String filePath) {
-
-        String responseString = null;
-
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(getUrl());
-
-        try {
-            org.apache.http.entity.mime.MultipartEntity entity = new org.apache.http.entity.mime.MultipartEntity();
-
-            File sourceFile = new File(filePath);
-            entity.addPart("file", new FileBody(sourceFile));
-            entity.addPart(new FormBodyPart("params", new StringBody(getParams())));
-
-            httppost.setEntity(entity);
-
-            HttpResponse response = httpclient.execute(httppost);
-
-            int statusCode = response.getStatusLine().getStatusCode();
-            onConnect(statusCode);
-
-            if (statusCode == 200) {
-                onReceiveResponse();
-                responseString = EntityUtils.toString(response.getEntity());
-                onReadResponse(responseString);
-                onAppendResponse(responseString);
-                onFinishedReadingResponse(responseString);
-                onHTTPResultsSuccessful(responseString, null, null, null, null);
-            } else {
-                String errorMessage = "Error occurred! Http Status Code: " + statusCode;
-                onHTTPResultsSuccessful(errorMessage, null, null, null, null);
-                throw new IOException(errorMessage);
-            }
-
-        } catch (ClientProtocolException e) {
-            responseString = e.toString();
-        } catch (IOException e) {
-            responseString = e.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return responseString;
-    }
 }

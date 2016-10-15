@@ -1,7 +1,5 @@
 package com.marvik.libs.android.applications;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -9,14 +7,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionGroupInfo;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.provider.Settings;
 
-import com.marvik.libs.android.R;
 import com.marvik.libs.android.constants.Constants;
 import com.marvik.libs.android.io.handler.FilesHandler;
 import com.marvik.libs.android.utils.Utilities;
+
+import com.marvik.libs.android.R;
 
 import java.io.File;
 import java.util.List;
@@ -234,17 +232,6 @@ public class AppsManager {
     }
 
     /**
-     * Deletes an app shortcut
-     * @param packageName package name
-     */
-    public void deleteShortcut(String packageName) {
-        int appHomeScreenIcon = getPackageInfo(packageName, PackageManager.GET_META_DATA).applicationInfo.icon;
-        String applicationName = getApplicationName(packageName);
-        Intent launchIntent = getApplicationLaunchIntent(packageName);
-        getUtilities().deleteHomesScreenShortcut(launchIntent, appHomeScreenIcon, applicationName);
-    }
-
-    /**
      * Create a copy of an installed application
      *
      * @param packageName
@@ -322,130 +309,4 @@ public class AppsManager {
         intent.setData(data);
         getUtilities().startActivity(intent);
     }
-
-    /**
-     * Return the running tasks info
-     *
-     * @param max max items to return
-     * @return list of running task info
-     */
-    public List<ActivityManager.RunningTaskInfo> getRunningTasks(int max) {
-        ActivityManager am = (ActivityManager) getContext().getSystemService(Activity.ACTIVITY_SERVICE);
-        return am.getRunningTasks(max);
-    }
-
-    /**
-     * Returns the package name of the top running task
-     *
-     * @return packageName
-     */
-    public String getTopRunningPackage() {
-        return getRunningTasks(1).get(0).topActivity.getPackageName();
-    }
-
-    /**
-     * Checks if this package is a potential launcher app
-     *
-     * @param packageName package name
-     * @return isLauncher
-     */
-    public boolean isALauncherApp(String packageName) {
-        boolean isLauncher = false;
-        PackageManager packageManager = getPackageManager();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
-        if (resolveInfos != null) {
-            for (ResolveInfo resolveInfo : resolveInfos) {
-                if (resolveInfo.activityInfo.packageName.equals(packageName)) {
-                    isLauncher = true;
-                }
-            }
-        }
-        return isLauncher;
-    }
-
-    /**
-     * Install an app shortcut on the home screen
-     *
-     * @param packageName package name
-     * @throws ClassNotFoundException
-     * @throws PackageManager.NameNotFoundException
-     */
-    public void installShortcut(String packageName) throws ClassNotFoundException, PackageManager.NameNotFoundException {
-        Intent shortcutIntent = new Intent(getContext(),
-                getApplicationLauncherClasses(packageName));
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
-
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getApplicationName(packageName));
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(getContext(),
-                        getApplicationLauncherIcon(packageName)));
-
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
-        getContext().sendBroadcast(addIntent);
-    }
-
-    /**
-     * Uninstall this app short cut on the home screen
-     *
-     * @param packageName package name
-     * @throws ClassNotFoundException
-     * @throws PackageManager.NameNotFoundException
-     */
-    public void uninstallShortcut(String packageName) throws ClassNotFoundException, PackageManager.NameNotFoundException {
-        Intent shortcutIntent = new Intent(getContext(),
-                getApplicationLauncherClasses(packageName));
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
-
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getApplicationName(packageName));
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(getContext(),
-                        getApplicationLauncherIcon(packageName)));
-
-        addIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-        getContext().sendBroadcast(addIntent);
-    }
-
-    /**
-     * Get the app icon of this app
-     *
-     * @param packageName package name
-     * @return app icon
-     * @throws PackageManager.NameNotFoundException
-     */
-    public int getApplicationLauncherIcon(String packageName) throws PackageManager.NameNotFoundException {
-        PackageManager packageManager = getPackageManager();
-        PackageInfo packageInfos = packageManager.getPackageInfo(packageName, 0);
-        return packageInfos.applicationInfo.banner;
-    }
-
-    /**
-     * Get a launcher class associated with this package
-     *
-     * @param packageName package
-     * @throws ClassNotFoundException
-     * @retun Launcher class
-     */
-    public Class<?> getApplicationLauncherClasses(String packageName) throws ClassNotFoundException {
-        Class<?> launcherClass = null;
-        PackageManager packageManager = getPackageManager();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
-        if (resolveInfos != null) {
-            for (ResolveInfo resolveInfo : resolveInfos) {
-                if (resolveInfo.activityInfo.packageName.equals(packageName)) {
-                    launcherClass = Class.forName(resolveInfo.activityInfo.parentActivityName);
-                }
-            }
-        }
-        return launcherClass;
-    }
-
 }

@@ -1,7 +1,6 @@
 package com.marvik.libs.android.fragments;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.SharedElementCallback;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.transition.ChangeBounds;
@@ -22,24 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.marvik.libs.android.activities.MaterialActivity;
-import com.marvik.libs.android.net.NetworkUtils;
-import com.marvik.libs.android.utils.Utilities;
-
 /**
- * MasterFragment
- * Directly extends the fragment class
- * A Fragment is a piece of an application's user interface or behavior
- * that can be placed
  * Created by victor on 4/8/2016.
  */
 public abstract class MasterFragment extends Fragment {
-
-    private MaterialActivity materialActivity;
-    private Utilities utilities;
-    private Callbacks callbacks;
-    private NetworkUtils networkUtils;
-
     /**
      * Supply the construction arguments for this fragment.  This can only
      * be called before the fragment has been attached to its activity; that
@@ -121,7 +105,6 @@ public abstract class MasterFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         onFragmentActivityCreated(savedInstanceState);
-        callbacks.onSetActivityTitle(getActivityTitle());
     }
 
 
@@ -176,7 +159,7 @@ public abstract class MasterFragment extends Fragment {
      * in the Bundle given to {@link #onCreate(Bundle)},
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
      * {@link #onActivityCreated(Bundle)}.
-     * <p>
+     * <p/>
      * <p>This corresponds to {@link Activity#onSaveInstanceState(Bundle)
      * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
      * applies here as well.  Note however: <em>this method may be called
@@ -205,7 +188,7 @@ public abstract class MasterFragment extends Fragment {
      * Called to do initial creation of a fragment.  This is called after
      * {@link #onAttach(Activity)} and before
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p>
+     * <p/>
      * <p>Note that this can be called while the fragment's activity is
      * still in the process of being created.  As such, you can not rely
      * on things like the activity's content view hierarchy being initialized
@@ -218,7 +201,6 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initLibs();
         onFragmentCreated(savedInstanceState);
     }
 
@@ -242,7 +224,7 @@ public abstract class MasterFragment extends Fragment {
      * This is optional, and non-graphical fragments can return null (which
      * is the default implementation).  This will be called between
      * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
-     * <p>
+     * <p/>
      * <p>If you return a View from here, you will later be called in
      * {@link #onDestroyView} when the view is being released.
      *
@@ -258,10 +240,7 @@ public abstract class MasterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = onFragmentViewCreate(onFragmentCreateView(inflater, container, savedInstanceState));
-        onFragmentViewsCreated(view, savedInstanceState);
-        callbacks.onSetActivityTitle(getActivityTitle());
-        return view;
+        return onFragmentViewCreated(onFragmentCreateView(inflater, container, savedInstanceState));
     }
 
 
@@ -278,6 +257,7 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        onFragmentViewCreated(view, savedInstanceState);
     }
 
 
@@ -287,12 +267,10 @@ public abstract class MasterFragment extends Fragment {
      *
      * @param context
      */
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         onFragmentAttach(context);
-        callbacks = (Callbacks) getContext();
     }
 
 
@@ -304,7 +282,6 @@ public abstract class MasterFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         onFragmentAttach(activity);
-        callbacks = (Callbacks) getActivity();
     }
 
     /**
@@ -460,7 +437,7 @@ public abstract class MasterFragment extends Fragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p>
+     * <p/>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
@@ -598,7 +575,7 @@ public abstract class MasterFragment extends Fragment {
      * Called to do initial creation of a fragment.  This is called after
      * {@link #onAttach(Activity)} and before
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * <p>
+     * <p/>
      * <p>Note that this can be called while the fragment's activity is
      * still in the process of being created.  As such, you can not rely
      * on things like the activity's content view hierarchy being initialized
@@ -609,13 +586,6 @@ public abstract class MasterFragment extends Fragment {
      *                           a previous saved state, this is the state.
      */
     protected abstract void onFragmentCreated(Bundle savedInstanceState);
-
-    /**
-     * Override this method to set a custom name of fragment
-     *
-     * @return fragment|activity title
-     */
-    protected abstract String getActivityTitle();
 
     /**
      * Called when the fragment's activity has been created and this
@@ -652,12 +622,6 @@ public abstract class MasterFragment extends Fragment {
      */
     protected abstract void onFragmentStart();
 
-    /**
-     * Gets the title of the attached fragment and sets it as the title of the activity
-     *
-     * @return activityTitle
-     */
-    // protected abstract String getActivityTitle();
 
     /**
      * Called when a fragment is first attached to its context.
@@ -686,7 +650,7 @@ public abstract class MasterFragment extends Fragment {
      * This is optional, and non-graphical fragments can return null (which
      * is the default implementation).  This will be called between
      * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
-     * <p>
+     * <p/>
      * <p>If you return a View from here, you will later be called in
      * {@link #onDestroyView} when the view is being released.
      *
@@ -707,16 +671,19 @@ public abstract class MasterFragment extends Fragment {
      * @param view
      * @return
      */
-    protected abstract View onFragmentViewCreate(View view);
+    protected abstract View onFragmentViewCreated(View view);
 
     /**
      * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
-     * has executed. This is where the views data should be set
+     * has returned, but before any saved state has been restored in to the view.
+     * This gives subclasses a chance to initialize themselves once
+     * they know their view hierarchy has been completely created.  The fragment's
+     * view hierarchy is not however attached to its parent at this point.
      *
      * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      */
-    protected abstract void onFragmentViewsCreated(View view, Bundle savedInstanceState);
+    protected abstract void onFragmentViewCreated(View view, Bundle savedInstanceState);
 
     /**
      * Called when a fragment loads an animation.
@@ -752,7 +719,7 @@ public abstract class MasterFragment extends Fragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p>
+     * <p/>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
@@ -920,7 +887,7 @@ public abstract class MasterFragment extends Fragment {
      * in the Bundle given to {@link #onCreate(Bundle)},
      * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
      * {@link #onActivityCreated(Bundle)}.
-     * <p>
+     * <p/>
      * <p>This corresponds to {@link Activity#onSaveInstanceState(Bundle)
      * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
      * applies here as well.  Note however: <em>this method may be called
@@ -1008,35 +975,4 @@ public abstract class MasterFragment extends Fragment {
      * is called after {@link #onDestroy()}.
      */
     protected abstract void onFragmentDetach();
-
-    public MaterialActivity getMaterialActivity() {
-        return materialActivity;
-    }
-
-    public Utilities getUtilities() {
-        return utilities;
-    }
-
-    public NetworkUtils getNetworkUtils() {
-        return networkUtils;
-    }
-
-    private void initLibs() {
-        materialActivity = (MaterialActivity) getActivity();
-        utilities = new Utilities(getActivity());
-        networkUtils = new NetworkUtils(getActivity());
-    }
-
-    /**
-     * MasterFragment#Callbacks
-     */
-    public interface Callbacks {
-        /**
-         * Callback called when an activity title is set.
-         * This call back sets the passed activity title as the title of the activity
-         *
-         * @param activityTitle the activity title
-         */
-        void onSetActivityTitle(String activityTitle);
-    }
 }

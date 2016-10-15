@@ -1,4 +1,4 @@
-package com.marvik.libs.android.media.audio.player;
+package com.marvik.libs.android.audio.player;
 
 import android.media.MediaPlayer;
 

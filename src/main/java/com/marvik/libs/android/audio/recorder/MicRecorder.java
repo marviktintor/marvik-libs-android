@@ -1,4 +1,4 @@
-package com.marvik.libs.android.media.audio.recorder;
+package com.marvik.libs.android.audio.recorder;
 
 import android.media.MediaRecorder;
 

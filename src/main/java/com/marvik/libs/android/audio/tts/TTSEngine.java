@@ -1,4 +1,4 @@
-package com.marvik.libs.android.media.audio.tts;
+package com.marvik.libs.android.audio.tts;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
