@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 
-
-
 public class FilesHandler {
 
     private FileStreamReader fileStreamReader;
@@ -160,7 +158,9 @@ public class FilesHandler {
     public void copyFile(String from, String to) {
         fileStreamWriter.copyFile(from, to);
 
-    } /**
+    }
+
+    /**
      * Copy a file to a new file path
      *
      * @param from
@@ -171,4 +171,13 @@ public class FilesHandler {
 
     }
 
+    /**
+     * Checks if this file path actually exists
+     *
+     * @param filePath
+     * @return is exists
+     */
+    public boolean isExists(String filePath) {
+        return (new File(filePath)).exists();
+    }
 }
