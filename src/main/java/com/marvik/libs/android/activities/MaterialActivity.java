@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.marvik.libs.android.R;
 import com.marvik.libs.android.utils.Utilities;
@@ -25,7 +24,6 @@ public abstract class MaterialActivity extends AppCompatActivity {
 
     private Utilities utils;
     private InterstitialAd interstitialAd;
-    private AdRequest adRequest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,9 +142,6 @@ public abstract class MaterialActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         onActivityPaused();
-        if (interstitialAd.isLoaded()) {
-            interstitialAd.show();
-        }
     }
 
 
@@ -839,49 +834,53 @@ public abstract class MaterialActivity extends AppCompatActivity {
     }
 
     private void initInterstitialAds() {
-        getUtilities().toast("Init Ads");
         interstitialAd = new InterstitialAd(getApplicationContext());
         interstitialAd.setAdUnitId(getUtilities().getString(R.string.hackers_wifi_interstitial_ads));
-        adRequest = new AdRequest.Builder().addTestDevice("F356C289C77077346E28F47DA83B0FBD").build();
-        interstitialAd.loadAd(adRequest);
+        createAdRequest();
 
         interstitialAd.setAdListener(new AdListener() {
 
             @Override
             public void onAdLeftApplication() {
                 super.onAdLeftApplication();
-                getUtilities().toast("Ad Left Application");
             }
 
             @Override
             public void onAdOpened() {
                 super.onAdOpened();
-                getUtilities().toast("Ad Opened");
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 super.onAdFailedToLoad(errorCode);
-                getUtilities().toast("Ad Failed "+ errorCode);
             }
 
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                getUtilities().toast("Ad Loaded");
-                interstitialAd.show();
             }
 
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-                getUtilities().toast("Ad Closed");
-                adRequest = new AdRequest.Builder().setRequestAgent(getUtilities().getString(R.string.hackers_wifi_interstitial_ads)).build();
-                interstitialAd.loadAd(adRequest);
+                createAdRequest();
             }
         });
 
     }
 
+    /**
+     * CallBack Called to create ad request
+     */
+    protected abstract void createAdRequest();
+
+    /**
+     * Get a handle of  the interstitial ads
+     *
+     * @return interstitialAd
+     */
+    public InterstitialAd getInterstitialAd() {
+        return interstitialAd;
+    }
 }
 
