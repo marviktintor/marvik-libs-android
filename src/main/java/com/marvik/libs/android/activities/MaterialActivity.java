@@ -474,7 +474,7 @@ public abstract class MaterialActivity extends AppCompatActivity {
     /**
      * Returns the id of the parent container where the inflated fragments are attached
      *
-     * @return
+     * @return layout resId
      */
     protected abstract int getParentContainerId();
 
