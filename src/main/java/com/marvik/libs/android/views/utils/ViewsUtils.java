@@ -16,6 +16,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.marvik.libs.android.R;
+
 /**
  * ViewsUtils
  * Contains simple method that play around with android views
@@ -322,6 +324,11 @@ public class ViewsUtils {
      * @return bitmap
      */
     public Bitmap getBitmap(int drawableResId) {
-        return BitmapFactory.decodeResource(getContext().getResources(), drawableResId);
+        try {
+            return BitmapFactory.decodeResource(getContext().getResources(), drawableResId);
+        } catch (OutOfMemoryError e) {
+            return BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.error_icon);
+        }
+
     }
 }
