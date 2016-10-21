@@ -44,7 +44,7 @@ public abstract class StateLessFragmentActivity extends StatelessActivity {
     public int attachFragment(Fragment fragment, boolean addToBackStack) {
         if (addToBackStack)
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment)
-                    .addToBackStack(fragment.getClass().getCanonicalName())
+                    .addToBackStack(getPackageName())
                     .commit();
         else
             getFragmentManager().beginTransaction().replace(getParentContainerId(), fragment).commit();
