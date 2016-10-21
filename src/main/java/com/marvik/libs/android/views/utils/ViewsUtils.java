@@ -3,6 +3,8 @@ package com.marvik.libs.android.views.utils;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
@@ -313,4 +315,13 @@ public class ViewsUtils {
         alert.show();
     }
 
+    /**
+     * Get a bitmap
+     *
+     * @param drawableResId id of the drawable
+     * @return bitmap
+     */
+    public Bitmap getBitmap(int drawableResId) {
+        return BitmapFactory.decodeResource(getContext().getResources(), drawableResId);
+    }
 }
