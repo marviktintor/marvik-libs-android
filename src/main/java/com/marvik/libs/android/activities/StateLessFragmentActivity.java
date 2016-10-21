@@ -60,8 +60,8 @@ public abstract class StateLessFragmentActivity extends StatelessActivity {
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 1) {
             getFragmentManager().popBackStack();
+        } else {
+            finish();
         }
-        super.onBackPressed();
     }
-
 }
