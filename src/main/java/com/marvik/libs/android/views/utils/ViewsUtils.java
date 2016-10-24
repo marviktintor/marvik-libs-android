@@ -328,6 +328,8 @@ public class ViewsUtils {
         try {
             return BitmapFactory.decodeResource(getContext().getResources(), drawableResId);
         } catch (OutOfMemoryError e) {
+            System.gc();
+            Runtime.getRuntime().gc();
             return null;
         }
 
