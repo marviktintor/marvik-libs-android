@@ -8,9 +8,6 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -27,83 +24,13 @@ import java.io.IOException;
 
 public class ImageCompressor {
 
-
     /**
-     * Method to compress image and send to server
-     */
-
-    public Bitmap previewCompressedImage(String filePath) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-
-        // down sizing image as it throws OutOfMemory Exception for larger
-        // images
-        options.inSampleSize = 8;
-
-        return BitmapFactory.decodeFile(filePath);
-    }
-
-    /**
-     * Compresses the image
-     * Log.d the result of the compression
-     * Deletes the compressed file
+     * Compress the image on the specified file path
      *
-     * @param filePath of image to compress
-     * @return true if the above steps were well executed
+     * @param filePath to the image
+     * @return compressed bitmap
      */
-    public boolean testCompressImage(String filePath) {
-
-        String initialImageSize = "";
-
-        String compressedImageSize = "";
-
-        String compressedImageFilePath = null;
-
-        File imgFile = new File(filePath);
-
-        if (imgFile.exists()) {
-
-            long length = imgFile.length();
-            length = length / 1024;
-
-            if (length < 1000) {
-                initialImageSize = String.valueOf(length) + " KB";
-            } else {
-                double dlength;
-                dlength = ((double) length / 1000.0);
-                initialImageSize = String.valueOf(dlength) + " MB";
-            }
-
-            compressedImageFilePath = compressImage(filePath);
-
-            File cFile = new File(compressedImageFilePath);
-            long cFilelength = cFile.length();
-            cFilelength = cFilelength / 1024;
-
-            if (cFilelength < 1000) {
-                compressedImageSize = String.valueOf(cFilelength) + " KB";
-            } else {
-                double dClength;
-                dClength = ((double) cFilelength / 1000.0);
-                compressedImageSize = String.valueOf(dClength) + " MB";
-            }
-
-            Log.d("ImageCompressor", "Initial Size " + initialImageSize);
-            Log.d("ImageCompressor", "Compressed Size " + compressedImageSize);
-
-            return cFile.delete();
-        }
-
-        return false;
-    }
-
-    /**
-     * Compress image and return the file path of the compressed image
-     *
-     * @param filePath of image to compress
-     * @return filepath of compressed image
-     */
-
-    public String compressImage(String filePath) {
+    public static Bitmap compressImage(String filePath) {
 
         Bitmap scaledBitmap = null;
 
@@ -119,8 +46,8 @@ public class ImageCompressor {
 
         //max Height and width values of the compressed image is taken as 816x612
 
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
+        float maxHeight = actualHeight / 4;
+        float maxWidth = actualWidth / 4;
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 
@@ -205,32 +132,10 @@ public class ImageCompressor {
             e.printStackTrace();
         }
 
-        FileOutputStream out = null;
-
-        String filename = new File(filePath).getName();
-
-        try {
-            out = new FileOutputStream(filename);
-
-            //write the compressed bitmap at the destination specified by filename.
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return filename;
+        return scaledBitmap;
     }
 
-    /**
-     * Calculate the sample size of an image
-     *
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return sampleSize
-     */
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
