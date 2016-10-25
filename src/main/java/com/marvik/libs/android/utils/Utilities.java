@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Patterns;
@@ -1190,5 +1191,31 @@ public class Utilities {
         }
 
         return friendlyDate;
+    }
+
+    /**
+     * Send a text message
+     *
+     * @param address receiver address
+     * @param message to send
+     */
+    public void sendMessage(String address, String message) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        intent.putExtra("address", address);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
+        intent.putExtra(TelephonyManager.EXTRA_INCOMING_NUMBER, address);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Call a phone number
+     *
+     * @param phoneNumber to call
+     */
+    public void call(String phoneNumber) {
+        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
 }
