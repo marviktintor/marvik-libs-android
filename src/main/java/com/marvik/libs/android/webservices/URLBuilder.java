@@ -79,6 +79,6 @@ public class URLBuilder {
      */
     @Override
     public String toString() {
-        return getQuery();
+        return buildUpon();
     }
 }
