@@ -2,6 +2,7 @@ package com.marvik.libs.android.net;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.DhcpInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
@@ -285,5 +286,9 @@ public class NetworkUtils {
      */
     public String getCertificateSignatureAlgorithmOID(X509Certificate x509Certificate) {
         return x509Certificate.getSigAlgOID();
+    }
+
+    public DhcpInfo getDhcpInfo() {
+        return getWifiManager().getDhcpInfo();
     }
 }
