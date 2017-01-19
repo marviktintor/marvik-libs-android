@@ -8,7 +8,12 @@ import android.support.annotation.NonNull;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+* PreferencesManager 
+* 
+* Provides high level API's to quicky read and write preferences
+* @author Victor Mwenda <vmwenda.vm@gmail.com>
+*/
 public class PreferencesManager {
 
     private Context context;
