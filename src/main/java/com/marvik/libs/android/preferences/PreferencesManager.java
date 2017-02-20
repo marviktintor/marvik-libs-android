@@ -101,5 +101,11 @@ public class PreferencesManager {
 
         return null;
     }
-
+    
+    /**
+     * Clear preferences
+     */
+    public void clearPreferences() {
+        getEditor().clear().commit();
+    }
 }
