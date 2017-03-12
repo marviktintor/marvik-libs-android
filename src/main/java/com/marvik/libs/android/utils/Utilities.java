@@ -1152,9 +1152,7 @@ public class Utilities {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(operation);
     }
-<<<<<<< HEAD
-=======
-
+	
     /**
      * Get the time in milliseconds of this time
      *
@@ -1277,5 +1275,76 @@ public class Utilities {
     public void call(String phoneNumber) {
         startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
->>>>>>> 35504b464ede40924f47151bf3394dc072b9f512
+	
+	/**
+     * Send a broadcast
+     *
+     * @param action
+     * @param flags
+     * @param extras
+     * @param <T>
+     */
+    protected <T> void sendBroadcast(String action, int flags, Map<String, T> extras) {
+
+        Intent intent = new Intent(action);
+
+        intent.setFlags(flags);
+
+        if (extras != null) {
+            //Add extras
+            Set<String> keySet = extras.keySet();
+
+            for (String key : keySet) {
+
+                T value = extras.get(key);
+
+                if (value instanceof ArrayList) {
+                    intent.putExtra(key, (ArrayList) value);
+                }
+                if (value instanceof Boolean) {
+                    intent.putExtra(key, (Boolean) value);
+                }
+                if (value instanceof Bundle) {
+                    intent.putExtra(key, (Bundle) value);
+                }
+                if (value instanceof Byte) {
+                    intent.putExtra(key, (Byte) value);
+                }
+                if (value instanceof Character) {
+                    intent.putExtra(key, (Character) value);
+                }
+                if (value instanceof CharSequence) {
+                    intent.putExtra(key, (CharSequence) value);
+                }
+                if (value instanceof Short) {
+                    intent.putExtra(key, (Short) value);
+                }
+                if (value instanceof Integer) {
+                    intent.putExtra(key, (Integer) value);
+                }
+                if (value instanceof Long) {
+                    intent.putExtra(key, (Long) value);
+                }
+                if (value instanceof Float) {
+                    intent.putExtra(key, (Float) value);
+                }
+                if (value instanceof Double) {
+                    intent.putExtra(key, (Double) value);
+                }
+                if (value instanceof Parcelable) {
+                    intent.putExtra(key, (Parcelable) value);
+                }
+                if (value instanceof String) {
+                    intent.putExtra(key, (String) value);
+                }
+                if (value instanceof Serializable) {
+                    intent.putExtra(key, (Serializable) value);
+                }
+            }
+
+        }
+
+        getContext().sendBroadcast(intent);
+    }
+
 }
