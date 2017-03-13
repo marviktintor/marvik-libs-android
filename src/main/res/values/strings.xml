@@ -3,5 +3,10 @@
     <string name="hackers_wifi_banner_ads">ca-app-pub-6551609151535558/6097613427</string>
     <string name="hackers_wifi_interstitial_ads">ca-app-pub-6551609151535558/2638782625</string>
     <string name="action_settings">Settings</string>
+<<<<<<< HEAD
     <string name="username">username</string>
+=======
+    <string name="username">Username</string>
+    <string name="useremail">UserEmail</string>
+>>>>>>> 35504b464ede40924f47151bf3394dc072b9f512
 </resources>

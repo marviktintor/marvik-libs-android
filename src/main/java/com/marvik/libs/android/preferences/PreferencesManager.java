@@ -5,7 +5,19 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+<<<<<<< HEAD
 
+=======
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+* PreferencesManager 
+* 
+* Provides high level API's to quicky read and write preferences
+* @author Victor Mwenda <vmwenda.vm@gmail.com>
+*/
+>>>>>>> 35504b464ede40924f47151bf3394dc072b9f512
 public class PreferencesManager {
 
     private Context context;

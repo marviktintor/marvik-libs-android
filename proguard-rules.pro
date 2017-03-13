@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+<<<<<<< HEAD
+=======
+-keep public class com.google.** {*;}
+-ignorewarnings*
+>>>>>>> 35504b464ede40924f47151bf3394dc072b9f512
