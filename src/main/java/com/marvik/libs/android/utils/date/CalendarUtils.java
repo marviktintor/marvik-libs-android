@@ -2,7 +2,7 @@ package com.marvik.libs.android.utils.date;
 
 
 public class CalendarUtils {
-    /**
+     /**
      * Get the time in milliseconds of this time
      *
      * @param pattern date format
@@ -113,12 +113,12 @@ public class CalendarUtils {
     }
 
     /**
-     * Returns time in yyy-MM-dd hh:mm:ss a format
+     * Returns time in yyy-MM-dd HH:mm:ss a format
      *
      * @param millis
      * @return
      */
     public static String getDefaultDate(long millis) {
-        return getFormattedDate("yyy-MM-dd hh:mm:ss a", millis);
+        return getFormattedDate("yyy-MM-dd HH:mm:ss Z", millis);
     }
 }
