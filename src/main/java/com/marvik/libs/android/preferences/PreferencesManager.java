@@ -5,9 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
-<<<<<<< HEAD
-
-=======
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +14,6 @@ import java.util.Set;
 * Provides high level API's to quicky read and write preferences
 * @author Victor Mwenda <vmwenda.vm@gmail.com>
 */
->>>>>>> 35504b464ede40924f47151bf3394dc072b9f512
 public class PreferencesManager {
 
     private Context context;
@@ -29,7 +25,7 @@ public class PreferencesManager {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    private Context getContext() {
+    protected Context getContext() {
         return context;
     }
 
@@ -44,7 +40,14 @@ public class PreferencesManager {
         return editor;
     }
 
-    protected  <T> void commit(String preference, T preferenceType) {
+    /**
+     * Commit the preference
+     *
+     * @param preference
+     * @param preferenceType
+     * @param <T>
+     */
+    protected <T> void commit(String preference, T preferenceType) {
         if (preferenceType instanceof Boolean) {
             getEditor().putBoolean(preference, (Boolean) preferenceType);
         }
@@ -57,12 +60,27 @@ public class PreferencesManager {
         if (preferenceType instanceof Long) {
             getEditor().putLong(preference, (Long) preferenceType);
         }
-        if (preferenceType instanceof String) {
+        if (preferenceType instanceof String || preference == null) {
+            getEditor().putString(preference, (String) preferenceType);
+        }
+        if (preferenceType instanceof HashSet) {
+            getEditor().putStringSet(preference, (HashSet<String>) preferenceType);
+        }
+        if (preferenceType == null) {
             getEditor().putString(preference, (String) preferenceType);
         }
         getEditor().commit();
     }
 
+    /**
+     * Read the shared preference of this class
+     *
+     * @param preference
+     * @param preferenceType
+     * @param defaultValue
+     * @param <T>
+     * @return
+     */
     protected <T> T read(String preference, Class<T> preferenceType, T defaultValue) {
         if (preferenceType == Boolean.class) {
             return (T) Boolean.valueOf(getSharedPreferences().getBoolean(preference, (Boolean) defaultValue));
@@ -80,10 +98,13 @@ public class PreferencesManager {
         if (preferenceType == String.class) {
             return (T) String.valueOf(getSharedPreferences().getString(preference, (String) defaultValue));
         }
+        if (preferenceType == Set.class) {
+            return (T) getSharedPreferences().getStringSet(preference, (Set<String>) defaultValue);
+        }
 
         return null;
     }
-    
+
     /**
      * Clear preferences
      */
