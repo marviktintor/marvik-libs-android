@@ -25,11 +25,12 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
-import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Patterns;
@@ -37,9 +38,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.marvik.libs.android.R;
 import com.marvik.libs.android.accounts.UserAccountsManager;
 import com.marvik.libs.android.database.utils.DatabaseUtilities;
+import com.marvik.libs.android.utils.date.CalendarUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,11 +53,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -301,16 +304,6 @@ public class Utilities {
     }
 
     /**
-     * Broadcast a flagged action
-     *
-     * @param action
-     * @param flags
-     */
-    public void sendBroadcast(String action, int flags) {
-        sendBroadcast(action, flags, null);
-    }
-
-    /**
      * Broadcasat a flagged bundled action
      *
      * @param action
@@ -384,7 +377,7 @@ public class Utilities {
         getContext().sendBroadcast(intent, null);
     }
 
-     /**
+    /**
      * Send a broadcast
      *
      * @param action
@@ -486,14 +479,14 @@ public class Utilities {
      * @param duration
      */
     public void toast(String text, int duration) {
-        // TODO Auto-generated method stub
+
         Toast toast = new Toast(getContext());
         TextView view = new TextView(getContext());
         view.setPadding(10, 10, 10, 10);
         view.setBackgroundColor(Color.rgb(180, 180, 180));
         view.setTextColor(Color.BLACK);
         view.setText(text);
-        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setDuration(duration);
         toast.setView(view);
         toast.show();
     }
@@ -575,8 +568,9 @@ public class Utilities {
      * @param alert          if not connected
      * @return
      */
-    public boolean isNetworkConnected(int notificationId, boolean alert) {
-        return isNetworkConnected(notificationId, alert, "Network Error", "Action Failed! You are not connected to the Internet");
+    public boolean isNetworkConnected(int notificationId, boolean alert, @IntegerRes int smallIcon, @IntegerRes int largeIcon) {
+        return isNetworkConnected(notificationId, alert, "Network Error",
+                "Action Failed! You are not connected to the Internet", smallIcon, largeIcon);
     }
 
     /**
@@ -588,7 +582,8 @@ public class Utilities {
      * @param message
      * @return
      */
-    public boolean isNetworkConnected(int notificationId, boolean alert, String title, String message) {
+    public boolean isNetworkConnected(int notificationId, boolean alert, String title, String message,
+                                      @IntegerRes int smallIcon, @IntegerRes int largeIcon) {
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -599,7 +594,7 @@ public class Utilities {
         }
 
         if (!networkConnected && alert) {
-            sendNotification(notificationId, title, message);
+            sendNotification(notificationId, title, message, smallIcon, largeIcon);
         }
         return networkConnected;
     }
@@ -611,14 +606,14 @@ public class Utilities {
      * @param title
      * @param message
      */
-    public void sendNotification(int notificationId, String title, String message) {
+    public void sendNotification(int notificationId, String title, String message, @IntegerRes int smallIcon, @IntegerRes int largeIcon) {
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompat = new NotificationCompat.Builder(getContext());
         notificationCompat.build();
         notificationCompat.mContentTitle = title;
         notificationCompat.mContentText = message;
-        notificationCompat.setSmallIcon(R.mipmap.ic_launcher);
-        notificationCompat.setLargeIcon(BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.ic_launcher));
+        notificationCompat.setSmallIcon(smallIcon);
+        notificationCompat.setLargeIcon(BitmapFactory.decodeResource(getContext().getResources(), largeIcon));
         notificationManager.notify(notificationId, notificationCompat.build());
     }
 
@@ -683,7 +678,7 @@ public class Utilities {
      * @param fileUri
      * @return
      */
-    public Bitmap getFileBitmap(String fileUri) {
+    public Bitmap getFileBitmap(String fileUri, @IntegerRes int defaultIcon) {
 
 
         if (fileUri == null) {
@@ -697,7 +692,7 @@ public class Utilities {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.error_icon);
+        return bitmap = BitmapFactory.decodeResource(getContext().getResources(), defaultIcon);
     }
 
     /**
@@ -1152,7 +1147,7 @@ public class Utilities {
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(operation);
     }
-	
+
     /**
      * Get the time in milliseconds of this time
      *
@@ -1275,8 +1270,8 @@ public class Utilities {
     public void call(String phoneNumber) {
         startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
-	
-	/**
+
+    /**
      * Send a broadcast
      *
      * @param action

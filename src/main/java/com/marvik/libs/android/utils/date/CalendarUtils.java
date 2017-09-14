@@ -1,6 +1,12 @@
 package com.marvik.libs.android.utils.date;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 public class CalendarUtils {
      /**
      * Get the time in milliseconds of this time
