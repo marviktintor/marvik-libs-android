@@ -2,12 +2,12 @@ package com.marvik.libs.android.downloader;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -15,48 +15,58 @@ import java.net.URLConnection;
 
 public final class Downloader {
 
-    private static Context context;
+    /**
+     * Downloads a file
+     *
+     * @param context
+     * @param downloadURI
+     * @param storeDir
+     * @param fileName
+     * @param overWrite
+     * @param downloadIntent
+     */
+    public void downloadFile(final Context context, final String downloadURI, final String storeDir,
+                             @Nullable String fileName, final boolean overWrite, final Intent downloadIntent) {
 
-    private Downloader() {}
-
-    public static Downloader getInstance(Context context) {
-        Downloader.context = context;
-        return new Downloader();
-    }
-
-    public void downloadFile(final String fileUri,final String filePath) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL(parseUrl(fileUri));
+                    URL url = new URL(parseUrl(downloadURI));
                     URLConnection urlConnection = url.openConnection();
                     InputStream inputStream = urlConnection.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
-                    String filename = fileUri.substring(fileUri.lastIndexOf("/"));
+                    File remoteFile = new File(downloadURI);
+
+                    String filename = remoteFile.getName();
+
+                    File downloadFile = new File(storeDir + File.pathSeparator + filename);
+
+
                     int count = 0;
+
                     byte[] buffer = new byte[1024];
 
-                    File fileDir = new File(filePath);
+                    File fileDir = new File(storeDir);
 
                     if (!fileDir.exists()) {
                         fileDir.mkdirs();
                     }
 
-                    File downloadFile = new File(fileDir + File.separator + filename);
-
-                    //Ensure that we do not always download existing files
-                    if (downloadFile.exists()) {
-                        return;
+                    if (!overWrite) {
+                        //Ensure that we do not always download existing files
+                        if (downloadFile.exists()) {
+                            return;
+                        }
                     }
 
                     FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+
                     while ((count = inputStream.read(buffer)) != -1) {
                         fileOutputStream.write(buffer, 0, count);
                     }
 
-                    context.sendBroadcast(new Intent("com.marvik.libs.android.downloader.Downloader.ACTION_FILE_DOWNLOADED"));
+                    context.sendBroadcast(downloadIntent);
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -67,21 +77,15 @@ public final class Downloader {
         }).start();
 
     }
-    
-     /**
+
+    /**
      * Parse fileUri
      * Replaces bad format characters like an empty space from a file uri
      *
      * @param fileUri
      * @return
      */
-    private String parseUrl(String fileUri) {
-
-        fileUri = fileUri.replace(" ", "%20");
-
-        if (fileUri.contains(" ")) {
-            return parseUrl(fileUri);
-        }
-        return fileUri;
+    public static String parseUrl(String fileUri) {
+        return fileUri.replace(" ", "%20");
     }
 }

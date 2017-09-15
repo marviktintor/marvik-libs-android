@@ -19,5 +19,4 @@ public interface DatabaseCRUDOperations {
 
     int delete(String selection, String[] selectionArgs);
 
-
 }

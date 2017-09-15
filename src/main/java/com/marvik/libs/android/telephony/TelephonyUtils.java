@@ -1,4 +1,4 @@
-package com.marvik.libs.android.utils.telephone;
+package com.marvik.libs.android.telephony;
 
 import android.annotation.TargetApi;
 import android.content.Context;

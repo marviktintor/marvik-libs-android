@@ -13,6 +13,7 @@ import java.io.IOException;
  * Created by victor on 3/25/2016.
  */
 public class MicRecorder {
+
     private boolean recording;
 
     private MediaRecorder mediaRecorder;

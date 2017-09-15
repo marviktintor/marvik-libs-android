@@ -1,5 +1,6 @@
-package com.marvik.libs.android.views.utils;
+package com.marvik.libs.android.views;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,6 +18,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * ViewsUtils
@@ -334,4 +340,171 @@ public class ViewsUtils {
         }
 
     }
+
+    /**
+     * Get a string in a text view
+     *
+     * @param textView
+     * @return
+     */
+    @NonNull
+    public String getString(@NonNull TextView textView) {
+        return textView.getText().toString();
+    }
+
+    /**
+     * Shows a custom toast
+     *
+     * @param text
+     * @param duration
+     */
+    public static void toast(Context context, String text, int duration) {
+
+        Toast toast = new Toast(context);
+        TextView view = new TextView(context);
+        view.setPadding(10, 10, 10, 10);
+        view.setBackgroundColor(Color.rgb(180, 180, 180));
+        view.setTextColor(Color.BLACK);
+        view.setText(text);
+        toast.setDuration(duration);
+        toast.setView(view);
+        toast.show();
+    }
+
+    /**
+     * Checks for null text views
+     *
+     * @param textViews
+     * @return
+     */
+    public static boolean isEmpty(@NonNull TextView[] textViews, boolean showError) {
+        boolean isEmpty = false;
+        for (TextView textView : textViews) {
+            if (textView.getText().length() == 0) {
+                if (showError) {
+                    textView.setError("Cannot be null");
+                    textView.setHintTextColor(Color.RED);
+                }
+                isEmpty = true;
+            } else {
+                textView.setHintTextColor(Color.GRAY);
+            }
+        }
+        return isEmpty;
+    }
+
+    /**
+     * Hides views
+     *
+     * @param views
+     */
+    public static void hideViews(@NonNull View[] views) {
+        for (View view : views) {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Shows views
+     *
+     * @param views
+     */
+    public void showViews(@NonNull View[] views) {
+        for (View view : views) {
+            view.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Reset any Views that extend text view
+     *
+     * @param t
+     * @param <T>
+     */
+    public <T extends TextView> void resetInputs(@NonNull T[] t, String defaultValue) {
+        for (T v : t) {
+            v.setText(defaultValue);
+        }
+    }
+
+    /**
+     * Loads images from file system
+     *
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
+    public Drawable getDrawableFromStream(String filePath) throws FileNotFoundException {
+
+        if (filePath == null) {
+            return null;
+        }
+        return Drawable.createFromStream(new FileInputStream(new File(filePath)), filePath);
+    }
+
+    /**
+     * Get bitmap from file system
+     *
+     * @param fileUri
+     * @return
+     */
+    public Bitmap getFileBitmap(String fileUri, @IntegerRes int defaultIcon) {
+
+
+        if (fileUri == null) {
+            return null;
+        }
+
+        Bitmap bitmap = null;
+        try {
+            return bitmap = BitmapFactory.decodeStream(new FileInputStream(new File(fileUri)));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return bitmap = BitmapFactory.decodeResource(getContext().getResources(), defaultIcon);
+    }
+
+    /**
+     * Show simple snack bar with  message and action text
+     *
+     * @param view
+     * @param text
+     * @param actionText
+     * @param action
+     */
+    public void showSimpleSnackBar(final View view, String text, String actionText, @NonNull final Intent action) {
+        Snackbar snackbar =
+                Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+        if (actionText != null && action != null) {
+            snackbar.setAction(actionText, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (action != null) {
+                        view.getContext().sendBroadcast(action);
+                    }
+                }
+            });
+        }
+
+        snackbar.show();
+    }
+
+    /**
+     * Show progress dialog
+     *
+     * @param title
+     * @param message
+     * @param cancelable
+     * @return
+     */
+    public ProgressDialog showCustomProgressDialog(Context context, String title, String message, boolean cancelable) {
+        ProgressDialog mDialog = new ProgressDialog(context);
+        mDialog.setTitle(title);
+        mDialog.setMessage(message);
+        mDialog.setCancelable(cancelable);
+        mDialog.show();
+        return mDialog;
+    }
+
 }

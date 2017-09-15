@@ -19,34 +19,20 @@ public class NetworkUtils {
 
     private WifiManager wifiManager;
 
-
-    private Context context;
-
-    /**
-     * Network utils
-     *
-     * @param context
-     */
-    public NetworkUtils(Context context) {
-        this.context = context;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
     /**
      * Turns on Wifi
      */
-    public boolean wifiEnable() {
-        return getWifiManager().isWifiEnabled() ? getWifiManager().isWifiEnabled() : getWifiManager().setWifiEnabled(true);
+    public boolean wifiEnable(Context context) {
+        return getWifiManager(context).isWifiEnabled()
+                ? getWifiManager(context).isWifiEnabled() : getWifiManager(context).setWifiEnabled(true);
     }
 
     /**
      * Turns off Wifi
      */
-    public boolean wifiDisable() {
-        return getWifiManager().isWifiEnabled() ? getWifiManager().setWifiEnabled(false) : getWifiManager().isWifiEnabled();
+    public boolean wifiDisable(Context context) {
+        return getWifiManager(context).isWifiEnabled()
+                ? getWifiManager(context).setWifiEnabled(false) : getWifiManager(context).isWifiEnabled();
     }
 
     /**
@@ -55,8 +41,8 @@ public class NetworkUtils {
      *
      * @return
      */
-    public boolean wifiStartScanning() {
-        return wifiEnable() ? getWifiManager().startScan() : wifiStartScanning();
+    public boolean wifiStartScanning(Context context) {
+        return wifiEnable(context) ? getWifiManager(context).startScan() : wifiStartScanning(context);
     }
 
     /**
@@ -64,8 +50,8 @@ public class NetworkUtils {
      *
      * @return
      */
-    public WifiManager getWifiManager() {
-        return wifiManager == null ? wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE) : wifiManager;
+    public WifiManager getWifiManager(Context context) {
+        return wifiManager == null ? wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE) : wifiManager;
     }
 
     /**
@@ -288,7 +274,7 @@ public class NetworkUtils {
         return x509Certificate.getSigAlgOID();
     }
 
-    public DhcpInfo getDhcpInfo() {
-        return getWifiManager().getDhcpInfo();
+    public DhcpInfo getDhcpInfo(Context context) {
+        return getWifiManager(context).getDhcpInfo();
     }
 }

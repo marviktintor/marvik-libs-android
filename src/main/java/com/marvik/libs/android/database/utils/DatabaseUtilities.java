@@ -68,9 +68,8 @@ public class DatabaseUtilities {
             where = "";
             if (index.length != indexColumn.length) {
                 throw new IllegalArgumentException("Missing params for Columns " + Arrays.deepToString(indexColumn) + ", You provided " + Arrays.deepToString(index));
-            }
+            } else {
 
-            if (index.length == indexColumn.length) {
                 for (int i = 0; i < indexColumn.length; i++) {
                     where += indexColumn[i] + "='" + index[i] + "' ";
                     if (i < (index.length - 1)) {

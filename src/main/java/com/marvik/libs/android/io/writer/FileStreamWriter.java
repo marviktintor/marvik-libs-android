@@ -17,7 +17,7 @@ public class FileStreamWriter {
      * @param text
      * @throws IOException
      */
-    public void writeStream(File file, String text) throws IOException {
+    public static void writeStream(File file, String text) throws IOException {
 
         // Check if directory exists
         if (!file.exists()) {
@@ -51,7 +51,7 @@ public class FileStreamWriter {
      * @param file
      * @return true if directory is created
      */
-    public boolean createDirectories(File file) {
+    public static boolean createDirectories(File file) {
         return file.mkdirs();
     }
 
@@ -61,14 +61,14 @@ public class FileStreamWriter {
      * @param directoryPath
      * @return true if directory is created
      */
-    public boolean createDirectories(String directoryPath) {
+    public static boolean createDirectories(String directoryPath) {
         return createDirectories(new File(directoryPath));
     }
 
     /**
      * Creates a file if the file does not exist
      */
-    public final File createFile(String filePath) throws IOException {
+    public static final File createFile(String filePath) throws IOException {
         File file = new File(filePath);
         if (file.exists()) {
             return file;
@@ -81,14 +81,14 @@ public class FileStreamWriter {
     /**
      * Deletes a file if the file exists
      */
-    public final boolean deleteFile(String filePath) {
+    public static final boolean deleteFile(String filePath) {
         return deleteFile(new File(filePath));
     }
 
     /**
      * Deletes a file if the file exists
      */
-    public final boolean deleteFile(File file) {
+    public static final boolean deleteFile(File file) {
 
         if (!file.exists()) {
             return true;
@@ -102,7 +102,7 @@ public class FileStreamWriter {
      * @param oldFile
      * @param newFile
      */
-    public void copyFile(File oldFile, File newFile) {
+    public static void copyFile(File oldFile, File newFile) {
         copyFile(oldFile.getAbsoluteFile(), newFile.getAbsoluteFile());
     }
 
@@ -112,7 +112,7 @@ public class FileStreamWriter {
      * @param oldFile
      * @param newFile
      */
-    public void copyFile(String oldFile, String newFile) {
+    public static void copyFile(String oldFile, String newFile) {
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(oldFile));
             int count = 0;

@@ -1,9 +1,7 @@
-package com.marvik.libs.android.webservices;
+package com.marvik.libs.android.net.http;
 
 import android.content.Context;
 import android.util.Log;
-
-import com.marvik.libs.android.utils.Utilities;
 
 import org.json.JSONException;
 
@@ -16,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static android.webkit.URLUtil.isValidUrl;
 
 
 public abstract class WebServicesProvider {
@@ -54,9 +53,6 @@ public abstract class WebServicesProvider {
     //Context
     private Context context;
 
-    //Utilities class that allows extra action
-    private Utilities utilities;
-
     //url builder to help in building url
     private URLBuilder urlBuilder;
 
@@ -71,7 +67,6 @@ public abstract class WebServicesProvider {
      */
     public WebServicesProvider(Context context, String url, String query) {
         this.context = context;
-        utilities = new Utilities(context);
         urlBuilder = new URLBuilder(url);
 
         setQuery(query);
@@ -79,14 +74,6 @@ public abstract class WebServicesProvider {
 
     }
 
-    /**
-     * Returns an object of utilities
-     *
-     * @return utilities
-     */
-    public Utilities getUtilities() {
-        return utilities;
-    }
 
     /**
      * Get an handle of the url builder to help in building urls
@@ -172,7 +159,7 @@ public abstract class WebServicesProvider {
             throw new NullPointerException("URL Cannot be null");
         }
 
-        if (!getUtilities().isValidUrl(getUrl())) {
+        if (!isValidUrl(getUrl())) {
             onConnectionError(ERROR_TYPE_INVALID_URL);
             throw new NullPointerException("Invalid URL ");
         }

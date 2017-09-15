@@ -1,4 +1,4 @@
-package com.marvik.libs.android.webservices;
+package com.marvik.libs.android.net.http;
 
 /**
  * URL Builder

@@ -1,4 +1,4 @@
-package com.marvik.libs.android.utils.device;
+package com.marvik.libs.android.device;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -131,6 +131,33 @@ public class DeviceUtils {
 
     public static String getTag() {
         return Build.TAGS;
+    }
+
+    /**
+     * Get device name
+     *
+     * @return device product name
+     */
+    public String getDeviceName() {
+        return Build.PRODUCT;
+    }
+
+    /**
+     * Get device model
+     *
+     * @return device model
+     */
+    public String getDeviceModel() {
+        return Build.MODEL;
+    }
+
+    /**
+     * Get device version
+     *
+     * @return device version
+     */
+    public String getDeviceVersion() {
+        return Build.VERSION.RELEASE;
     }
 
 }

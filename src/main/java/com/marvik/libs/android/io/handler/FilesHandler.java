@@ -1,32 +1,26 @@
 package com.marvik.libs.android.io.handler;
 
+import android.content.Context;
+
 import com.marvik.libs.android.io.reader.FileStreamReader;
 import com.marvik.libs.android.io.writer.FileStreamWriter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public class FilesHandler {
-
-    private FileStreamReader fileStreamReader;
-    private FileStreamWriter fileStreamWriter;
-
-    /**
-     * Perform various I/O functions
-     */
-    public FilesHandler() {
-        fileStreamReader = new FileStreamReader();
-        fileStreamWriter = new FileStreamWriter();
-    }
 
     /**
      * getFileStreamReader
      *
      * @return FileStreamReader
      */
-    public FileStreamReader getFileStreamReader() {
-        return fileStreamReader;
+    public static FileStreamReader getFileStreamReader() {
+        return new FileStreamReader();
     }
 
     /**
@@ -34,29 +28,29 @@ public class FilesHandler {
      *
      * @return FileStreamWriter
      */
-    public FileStreamWriter getFileStreamWriter() {
-        return fileStreamWriter;
+    public static FileStreamWriter getFileStreamWriter() {
+        return new FileStreamWriter();
     }
 
     /**
      * Creates a file if the file does not exist
      */
-    public final File createFile(String filePath) throws IOException {
-        return getFileStreamWriter().createFile(filePath);
+    public static final File createFile(String filePath) throws IOException {
+        return FileStreamWriter.createFile(filePath);
     }
 
     /**
      * Deletes a file if the file exists
      */
-    public final boolean deleteFile(String filePath) {
-        return getFileStreamWriter().deleteFile(filePath);
+    public static final boolean deleteFile(String filePath) {
+        return FileStreamWriter.deleteFile(filePath);
     }
 
     /**
      * Deletes a file if the file exists
      */
-    public final boolean deleteFile(File file) {
-        return getFileStreamWriter().deleteFile(file);
+    public static final boolean deleteFile(File file) {
+        return FileStreamWriter.deleteFile(file);
     }
 
     /**
@@ -66,8 +60,8 @@ public class FilesHandler {
      * @param text
      * @throws IOException
      */
-    public void writeStream(File file, String text) throws IOException {
-        getFileStreamWriter().writeStream(file, text);
+    public static void writeStream(File file, String text) throws IOException {
+        FileStreamWriter.writeStream(file, text);
     }
 
     /**
@@ -76,8 +70,8 @@ public class FilesHandler {
      * @param file
      * @return true if directory is created
      */
-    public boolean createDirectories(File file) {
-        return getFileStreamWriter().createDirectories(file);
+    public static boolean createDirectories(File file) {
+        return FileStreamWriter.createDirectories(file);
     }
 
     /**
@@ -86,29 +80,29 @@ public class FilesHandler {
      * @param directoryPath
      * @return true if directory is created
      */
-    public boolean createDirectories(String directoryPath) {
-        return getFileStreamWriter().createDirectories(new File(directoryPath));
+    public static boolean createDirectories(String directoryPath) {
+        return FileStreamWriter.createDirectories(new File(directoryPath));
     }
 
     /**
      * Reads the contents of a file
      */
-    public final String readFile(File file) throws IOException {
-        return getFileStreamReader().readFile(file);
+    public static final String readFile(File file) throws IOException {
+        return FileStreamReader.readFile(file);
     }
 
     /**
      * Reads the contents of a file
      */
-    public final String readFile(String filePath) throws IOException {
-        return getFileStreamReader().readFile(new File(filePath), true);
+    public static final String readFile(String filePath) throws IOException {
+        return FileStreamReader.readFile(new File(filePath), true);
     }
 
     /**
      * Reads the contents of a file, add new file
      */
-    public final String readFile(String filePath, boolean addNewLines) throws IOException {
-        return getFileStreamReader().readFile(new File(filePath), addNewLines);
+    public static final String readFile(String filePath, boolean addNewLines) throws IOException {
+        return FileStreamReader.readFile(new File(filePath), addNewLines);
     }
 
     /**
@@ -120,7 +114,7 @@ public class FilesHandler {
      * @return
      * @throws IOException
      */
-    public boolean createByteWeighedFile(String filePath, String fileData) {
+    public static boolean createByteWeighedFile(String filePath, String fileData) {
 
         try {
             // Write stream
@@ -141,7 +135,7 @@ public class FilesHandler {
      * @param directory
      * @return File Array
      */
-    public File[] getDirectoryFiles(String directory) {
+    public static File[] getDirectoryFiles(String directory) {
         File file = new File(directory);
         if (file.isDirectory()) {
             return file.listFiles();
@@ -155,8 +149,8 @@ public class FilesHandler {
      * @param from
      * @param to
      */
-    public void copyFile(String from, String to) {
-        fileStreamWriter.copyFile(from, to);
+    public static void copyFile(String from, String to) {
+        FileStreamWriter.copyFile(from, to);
 
     }
 
@@ -166,8 +160,8 @@ public class FilesHandler {
      * @param from
      * @param to
      */
-    public void copyFile(File from, File to) {
-        fileStreamWriter.copyFile(from, to);
+    public static void copyFile(File from, File to) {
+        FileStreamWriter.copyFile(from, to);
 
     }
 
@@ -177,7 +171,41 @@ public class FilesHandler {
      * @param filePath
      * @return is exists
      */
-    public boolean isExists(String filePath) {
+    public static boolean isExists(String filePath) {
         return (new File(filePath)).exists();
+    }
+
+    /**
+     * Get an asset
+     *
+     * @param assetPath
+     * @return
+     * @throws IOException
+     */
+    public static InputStream getAsset(Context context, String assetPath) throws IOException {
+        return context.getResources().getAssets().open(assetPath);
+    }
+
+    /**
+     * Reads a String stream from the assets
+     *
+     * @param assetFilePath
+     * @return
+     */
+    public static String readAssetsStringStream(Context context, String assetFilePath) {
+        try {
+            InputStream inputStream = FilesHandler.getAsset(context, assetFilePath);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            String readString = "";
+            while ((readString = bufferedReader.readLine()) != null) {
+                stringBuffer.append(readString);
+            }
+            return stringBuffer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
