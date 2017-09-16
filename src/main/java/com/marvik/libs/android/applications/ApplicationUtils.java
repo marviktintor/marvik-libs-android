@@ -3,6 +3,7 @@ package com.marvik.libs.android.applications;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -12,8 +13,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionGroupInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Patterns;
 
 import com.marvik.libs.android.io.handler.FilesHandler;
@@ -415,4 +419,50 @@ public class ApplicationUtils {
         alarmManager.cancel(operation);
     }
 
+    /**
+     * Get notification builder
+     *
+     * @return
+     */
+    public NotificationCompat.Builder getNotificationBuilder(Context context) {
+        return new NotificationCompat.Builder(context);
+    }
+
+    /**
+     * Creates a notification and sends it
+     *
+     * @param smallIcon
+     * @param largeIcon
+     * @param title
+     * @param contentText
+     * @param actions
+     * @param contentIntent
+     * @param defaults
+     */
+    public void sendExplicitNotification(Context context, int smallIcon, Bitmap largeIcon, String title, String contentText,
+                                         NotificationCompat.Action[] actions, PendingIntent contentIntent,
+                                         int defaults, int priority) {
+
+        NotificationCompat.Builder builder = getNotificationBuilder(context).
+                setContentTitle(title).setContentText(contentText)
+                .setDefaults(defaults).setContentIntent(contentIntent)
+                .setSmallIcon(smallIcon).setPriority(priority)
+                .setLargeIcon(largeIcon);
+
+        for (NotificationCompat.Action action : actions) {
+            builder.addAction(action);
+        }
+
+        sendNotification(context, builder.build(), 1);
+    }
+
+    /**
+     * Send a notification
+     *
+     * @param notification
+     */
+    public void sendNotification(Context context, Notification notification, int notificationId) {
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify(notificationId, notification);
+    }
 }
