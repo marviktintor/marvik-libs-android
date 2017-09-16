@@ -6,5 +6,10 @@
     <dimen name="nav_header_height">150dp</dimen>
     <dimen name="cardview_default_padding">16dp</dimen>
     <dimen name="default_cards_spacing">5dp</dimen>
-    <dimen name="default_line_height" >1dp</dimen>
+    <dimen name="default_line_height">1dp</dimen>
+    <dimen name="default_viewgroup_padding">16dp</dimen>
+    <dimen name="default_view_padding">10dp</dimen>
+    <dimen name="user_profile_default_padding">6dp</dimen>
+    <dimen name="line_height_default">1dp</dimen>
+    <dimen name="default_view_padding_small">5dp</dimen>
 </resources>
