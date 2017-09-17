@@ -12,4 +12,5 @@
     <dimen name="user_profile_default_padding">6dp</dimen>
     <dimen name="line_height_default">1dp</dimen>
     <dimen name="default_view_padding_small">5dp</dimen>
+    <dimen name="no_padding">0dp</dimen>
 </resources>

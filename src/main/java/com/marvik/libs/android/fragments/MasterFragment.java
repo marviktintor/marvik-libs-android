@@ -2,6 +2,9 @@ package com.marvik.libs.android.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.marvik.libs.android.activities.MasterActivity;
 
@@ -33,12 +36,23 @@ public abstract class MasterFragment extends Fragment {
     public abstract String getFragmentSubTitle();
 
     /**
+     * Returns the Res id of the layout to be populated as the View of this layout
+     *
+     * @return
+     */
+    public abstract int getLayout();
+
+    public View getFragmentView(LayoutInflater layoutInflater, ViewGroup container) {
+        return layoutInflater.inflate(getLayout(), container, false);
+    }
+
+    /**
      * Set the title of the fragment
      *
      * @param fragmentTitle
      */
     public void setFragmentTitle(String fragmentTitle) {
-        ((MasterActivity) getActivity()).setActivityTitle(fragmentTitle);
+        ((MasterActivity) getActivity()).setActivityTitle(fragmentTitle, "");
     }
 
     /**

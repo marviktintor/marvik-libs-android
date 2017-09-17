@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import com.marvik.libs.android.R;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -129,9 +128,9 @@ public abstract class MasterActivity extends AppCompatActivity {
     /**
      * Unlock the app navigation
      */
-    public void unlockNavigation() {
+    public void unlockNavigation(int navigationIcon) {
         getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        getAppToolbar().setNavigationIcon(R.drawable.ic_navigation_white);
+        getAppToolbar().setNavigationIcon(navigationIcon);
     }
 
     /**
@@ -139,8 +138,8 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @param activityTitle
      */
-    public void setActivityTitle(String activityTitle) {
-        getAppToolbar().setTitle(activityTitle != null ? activityTitle : getString(R.string.app_name));
+    public void setActivityTitle(String activityTitle, String appName) {
+        getAppToolbar().setTitle(activityTitle != null ? activityTitle : appName);
     }
 
 
@@ -246,24 +245,30 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param negativeIntent
      */
     public void showAlertDialog(Context context, String title, String message, String positiveButtonLabel,
-                                Intent positiveIntent, String negativeButtonLabel, Intent negativeIntent) {
+                                final Intent positiveIntent, String negativeButtonLabel, final Intent negativeIntent) {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle(title);
         alert.setMessage(message);
 
         if (positiveButtonLabel != null) {
-            alert.setPositiveButton(positiveButtonLabel, ((dialogInterface, i) -> {
-                if (positiveIntent != null) {
-                    sendBroadcast(positiveIntent);
+            alert.setPositiveButton(positiveButtonLabel, (new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (positiveIntent != null) {
+                        sendBroadcast(positiveIntent);
+                    }
                 }
             }));
         }
 
         if (negativeButtonLabel != null) {
-            alert.setNegativeButton(negativeButtonLabel, ((dialogInterface, i) -> {
-                if (negativeIntent != null) {
-                    sendBroadcast(negativeIntent);
+            alert.setNegativeButton(negativeButtonLabel, (new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (negativeIntent != null) {
+                        MasterActivity.this.sendBroadcast(negativeIntent);
+                    }
                 }
             }));
         }
