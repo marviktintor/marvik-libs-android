@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
@@ -34,16 +35,19 @@ import java.net.URL;
 public abstract class MasterActivity extends AppCompatActivity {
 
     protected ProgressDialog mProgress;
-    protected DrawerLayout mAppDrawer;
 
     protected NavigationView mAppNavigation;
 
-    protected AppBarLayout mAppBarLayout;
-    protected Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+        initViews();
     }
 
     @Override
@@ -86,9 +90,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @return
      */
-    public DrawerLayout getDrawerLayout() {
-        return mAppDrawer;
-    }
+    public abstract DrawerLayout getDrawerLayout();
 
     /**
      * Get the navigation view associated with this activity
@@ -104,18 +106,14 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @return
      */
-    public Toolbar getAppToolbar() {
-        return mToolbar;
-    }
+    public abstract Toolbar getAppToolbar();
 
     /**
      * Get the app bar layout
      *
      * @return
      */
-    public AppBarLayout getAppBarLayout() {
-        return mAppBarLayout;
-    }
+    public abstract AppBarLayout getAppBarLayout();
 
     /**
      * Lock the app navigation
@@ -334,5 +332,11 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @return
      */
     public abstract URL getAppShortenedPlayStoreDownloadLink() throws MalformedURLException;
+
+    /**
+     * Called after setContentView
+     * Initializes all the views in the activity
+     */
+    protected abstract void initViews();
 
 }
