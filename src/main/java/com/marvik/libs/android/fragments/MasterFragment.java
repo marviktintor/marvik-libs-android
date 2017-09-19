@@ -2,6 +2,8 @@ package com.marvik.libs.android.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,35 @@ import com.marvik.libs.android.activities.MasterActivity;
  */
 
 public abstract class MasterFragment extends Fragment {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(hasOptionsMenu());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getFragmentTitle() != null) setFragmentTitle(getFragmentTitle());
+        if (getFragmentSubTitle() != null) setFragmentSubTitle(getFragmentSubTitle());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     /**
      * Get the title of the fragment
      *
@@ -98,4 +129,11 @@ public abstract class MasterFragment extends Fragment {
         ((MasterActivity) getActivity()).tryCloseProgressDialog();
     }
 
+    /**
+     * Return true if this fragment has an options menu
+     * false otherwise
+     *
+     * @return
+     */
+    protected abstract boolean hasOptionsMenu();
 }
