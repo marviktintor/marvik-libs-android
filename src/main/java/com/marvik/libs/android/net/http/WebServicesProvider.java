@@ -1,9 +1,6 @@
 package com.marvik.libs.android.net.http;
 
-import android.content.Context;
-import android.util.Log;
-
-import org.json.JSONException;
+import android.util.Patterns;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -13,11 +10,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-import static android.webkit.URLUtil.isValidUrl;
 
-
-public abstract class WebServicesProvider {
+public abstract class WebServicesProvider<K, V> {
 
     /**
      * HTTP ERROR
@@ -45,32 +42,35 @@ public abstract class WebServicesProvider {
     public static final int ERROR_TYPE_EMPTY_QUERY = 5;
 
     //The query to send
-    private String query;
+    protected String query;
 
     //The url
-    private String url;
+    protected String url;
 
-    //Context
-    private Context context;
 
     //url builder to help in building url
-    private URLBuilder urlBuilder;
+    protected URLBuilder urlBuilder;
+
+    //The HTTP Response
+    protected String httpResponse;
+
+    //The request properties sent to the server
+    protected Map<K, V> requestProperties;
 
     /**
      * Web services provide class that provides apis
      * for sending requests to the server and has call
      * backs to handle errors and provide information that is incoming from the server
      *
-     * @param context
      * @param url
      * @param query
      */
-    public WebServicesProvider(Context context, String url, String query) {
-        this.context = context;
+    public WebServicesProvider(String url, String query, Map<K, V> requestProperties) {
         urlBuilder = new URLBuilder(url);
 
         setQuery(query);
         setUrl(url);
+        setRequestProperties(requestProperties);
 
     }
 
@@ -122,6 +122,14 @@ public abstract class WebServicesProvider {
         return query;
     }
 
+    public void setRequestProperties(Map<K, V> properties) {
+        this.requestProperties = properties;
+    }
+
+    public Map<K, V> getRequestProperties() {
+        return requestProperties;
+    }
+
     /**
      * Returns the query that is appended to the url while sending HTTP Request
      *
@@ -141,9 +149,6 @@ public abstract class WebServicesProvider {
         return getQuery();
     }
 
-    public Context getContext() {
-        return context;
-    }
 
     /**
      * Performs an HTTP Request and return the server response in form of a String
@@ -151,33 +156,46 @@ public abstract class WebServicesProvider {
      * @return
      * @throws IOException
      */
-    public String performHTTPRequest() throws IOException, JSONException {
+    public String doHttpRequest(String requestMethod) throws IOException {
         String dataStream = null;
 
         if (getUrl() == null) {
             onConnectionError(ERROR_TYPE_EMPTY_URL);
-            throw new NullPointerException("URL Cannot be null");
+            throw new IllegalArgumentException("URL Cannot be null");
         }
 
         if (!isValidUrl(getUrl())) {
             onConnectionError(ERROR_TYPE_INVALID_URL);
-            throw new NullPointerException("Invalid URL ");
+            throw new IllegalArgumentException("Invalid URL [" + getUrl() + "]");
         }
 
         URL url = new URL(getUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestMethod("POST");
-        httpURLConnection.setDoOutput(true);
-        httpURLConnection.setDoInput(true);
+        httpURLConnection.setRequestMethod(requestMethod);
 
+
+        if (getRequestProperties() != null) {
+            for (Map.Entry<K, V> entries : getRequestProperties().entrySet()) {
+                httpURLConnection.setRequestProperty(String.valueOf(entries.getKey()), String.valueOf(entries.getValue()));
+            }
+        }
+
+
+        httpURLConnection.setDoOutput(true);
+        //httpURLConnection.setDoInput(true);
 
         OutputStream outputStream = httpURLConnection.getOutputStream();
-        //onConnect(httpURLConnection.getResponseCode());
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        dataOutputStream.writeBytes(getQuery());
+
+        if (getQuery() != null) {
+            dataOutputStream.writeBytes(getQuery());
+            onSendQuery();
+        }
+
         dataOutputStream.flush();
         dataOutputStream.close();
-        onSendQuery();
+
+        onConnect(httpURLConnection.getResponseCode());
 
         InputStream inputStream = httpURLConnection.getInputStream();
         onReceiveResponse();
@@ -186,23 +204,55 @@ public abstract class WebServicesProvider {
 
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
 
         while ((dataStream = bufferedReader.readLine()) != null) {
             onReadResponse(dataStream);
 
-            stringBuffer.append(dataStream);
-            onAppendResponse(stringBuffer.toString());
+            builder.append(dataStream);
+            onAppendResponse(builder.toString());
         }
 
-        dataStream = stringBuffer.toString();
+        dataStream = builder.toString();
+
+
+        setHTTPResponse(dataStream);
 
         onFinishedReadingResponse(dataStream);
 
-        Log.i("SERVER_RESPONSE", dataStream);
 
         return dataStream;
 
+    }
+
+    /**
+     * Returns this is a valid url
+     *
+     * @param url
+     * @return
+     */
+    protected boolean isValidUrl(String url) {
+        return Pattern.matches(Patterns.WEB_URL.pattern(), url);
+    }
+
+    /**
+     * Performs a GET HTTP Request and return the server response in form of a String
+     *
+     * @return server response
+     * @throws IOException
+     */
+    public String doGetHttpRequest() throws IOException {
+        return doHttpRequest("GET");
+    }
+
+    /**
+     * Performs a POST HTTP Request and return the server response in form of a String
+     *
+     * @return server response
+     * @throws IOException
+     */
+    public String doPostHttpRequest() throws IOException {
+        return doHttpRequest("POST");
     }
 
     /**
@@ -258,7 +308,7 @@ public abstract class WebServicesProvider {
      *
      * @param readResponse
      */
-    public abstract void onFinishedReadingResponse(String readResponse) throws JSONException;
+    public abstract void onFinishedReadingResponse(String readResponse);
 
     /**
      * Called when an error has occurred making a HTTP_CONNECTION
@@ -268,8 +318,8 @@ public abstract class WebServicesProvider {
     public abstract void onConnectionError(int errorCode);
 
     /**
-     * WebServicesProvider#onHTTPResultsFailed
-     * <p/>
+     * AndroidWebServicesProvider#onHTTPResultsFailed
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -278,11 +328,11 @@ public abstract class WebServicesProvider {
      * @param clientIntent
      * @param build
      */
-    public abstract void onHTTPResultsFailed(String resultText, String client, String clientAction, String clientIntent, String build);
+    public abstract void onHttpResultsFailed(String resultText, String client, String clientAction, String clientIntent, String build);
 
     /**
-     * WebServicesProvider#onHTTPResultsSuccessful
-     * <p/>
+     * AndroidWebServicesProvider#onHTTPResultsSuccessful
+     * <p>
      * Called when a the http results are successful
      *
      * @param resultText
@@ -291,5 +341,23 @@ public abstract class WebServicesProvider {
      * @param clientIntent
      * @param build
      */
-    public abstract void onHTTPResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
+    public abstract void onHttpResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
+
+
+    /**
+     * @return the set http response
+     */
+    public String getHTTPResponse() {
+        return httpResponse;
+    }
+
+    /**
+     * Set HTTP Response
+     *
+     * @param httpResponse
+     */
+    public void setHTTPResponse(String httpResponse) {
+        this.httpResponse = httpResponse;
+    }
+
 }

@@ -16,6 +16,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ViewGroup;
+
+import com.marvik.libs.android.fragments.MasterFragment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +51,7 @@ public abstract class MasterActivity extends AppCompatActivity {
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         initViews();
+        onInitViews();
     }
 
     @Override
@@ -86,11 +90,37 @@ public abstract class MasterActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the drawer layout associated with this activity
+     * Get the layout resid associated with this activity
      *
      * @return
      */
-    public abstract DrawerLayout getDrawerLayout();
+    @LayoutRes
+    protected abstract int getActivityLayout();
+
+    /**
+     * Called after setContentView
+     * Initializes all the views in the activity
+     */
+    protected abstract void initViews();
+
+    /**
+     * Called after all views have been init and its the right time to attach event listeners
+     */
+    protected abstract void onInitViews();
+
+    /**
+     * Get the root container layout associated with this activity
+     *
+     * @return
+     */
+    public abstract ViewGroup getRootContainer();
+
+    /**
+     * Get the container layout associated with this activity
+     *
+     * @return
+     */
+    public abstract ViewGroup getContainer();
 
     /**
      * Get the navigation view associated with this activity
@@ -116,10 +146,54 @@ public abstract class MasterActivity extends AppCompatActivity {
     public abstract AppBarLayout getAppBarLayout();
 
     /**
+     * Returns the drawer layout associated with this activity;
+     * @return
+     */
+    public abstract DrawerLayout getDrawer();
+
+    /**
+     * Hides the app app bar
+     */
+    public void hideAppBar() {
+        getAppBarLayout().setVisibility(AppBarLayout.GONE);
+    }
+
+    /**
+     * Hides the app app bar
+     */
+    public void showAppBar() {
+        getAppBarLayout().setVisibility(AppBarLayout.VISIBLE);
+    }
+
+    /**
+     * Removes tool bar from the view
+     */
+    public void hideToolBar() {
+        setToolBarVisibility(Toolbar.GONE);
+    }
+
+    /**
+     * Hides the toolbar
+     */
+    public void hideToolBarLazy() {
+        setToolBarVisibility(Toolbar.INVISIBLE);
+    }
+
+    /**
+     * Shows the toolbar
+     */
+    public void showToolBar() {
+        setToolBarVisibility(Toolbar.VISIBLE);
+    }
+
+    public void setToolBarVisibility(int visibility){
+        getAppToolbar().setVisibility(visibility);
+    }
+    /**
      * Lock the app navigation
      */
     public void lockNavigation() {
-        getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         getAppToolbar().setNavigationIcon(null);
     }
 
@@ -127,9 +201,45 @@ public abstract class MasterActivity extends AppCompatActivity {
      * Unlock the app navigation
      */
     public void unlockNavigation(int navigationIcon) {
-        getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
     }
+
+    /**
+     * Opend drawer
+     */
+    public void openDrawer() {
+        if (!getDrawer().isDrawerOpen(getDrawerGravity())) {
+            getDrawer().openDrawer(getDrawerGravity());
+        }
+    }
+
+    /**
+     * Toggle drawer
+     */
+    public void toggleDrawer() {
+        if (getDrawer().isDrawerOpen(getDrawerGravity())) {
+            closeDrawer();
+        } else {
+            openDrawer();
+        }
+    }
+
+    /**
+     * Close drawer
+     */
+    public void closeDrawer() {
+        if (getDrawer().isDrawerOpen(getDrawerGravity())) {
+            getDrawer().closeDrawer(getDrawerGravity());
+        }
+    }
+
+    /**
+     * Get drawer gravity
+     *
+     * @return
+     */
+    public abstract int getDrawerGravity();
 
     /**
      * Set the title of the activity
@@ -333,10 +443,29 @@ public abstract class MasterActivity extends AppCompatActivity {
      */
     public abstract URL getAppShortenedPlayStoreDownloadLink() throws MalformedURLException;
 
-    /**
-     * Called after setContentView
-     * Initializes all the views in the activity
-     */
-    protected abstract void initViews();
 
+    /**
+     * On pre navigate callback
+     * Called before user navigates to a new fragment
+     *
+     * @param fragment
+     * @param <T>
+     */
+    abstract <T extends MasterFragment> void onPreNavigate(T fragment);
+
+    /**
+     * Called before
+     *
+     * @param fragment
+     * @param <T>
+     */
+    abstract <T extends MasterFragment> void onNavigate(T fragment);
+
+    abstract <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
+
+    abstract <T extends MasterFragment> void navigateTo(T fragment);
+
+    abstract <T extends MasterFragment> T getPreviousFragment();
+
+    abstract <T extends MasterFragment> T getCurrentFragment();
 }
