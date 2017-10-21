@@ -451,7 +451,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param fragment
      * @param <T>
      */
-    abstract <T extends MasterFragment> void onPreNavigate(T fragment);
+    abstract protected  <T extends MasterFragment> void onPreNavigate(T fragment);
 
     /**
      * Called before
@@ -459,13 +459,13 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param fragment
      * @param <T>
      */
-    abstract <T extends MasterFragment> void onNavigate(T fragment);
+    abstract protected <T extends MasterFragment>  void onNavigate(T fragment);
 
-    abstract <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
+    abstract  protected <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
 
-    abstract <T extends MasterFragment> void navigateTo(T fragment);
+    abstract  protected <T extends MasterFragment> void navigateTo(T fragment);
 
-    abstract <T extends MasterFragment> T getPreviousFragment();
+    abstract  protected <T extends MasterFragment> T getPreviousFragment();
 
-    abstract <T extends MasterFragment> T getCurrentFragment();
+    abstract  protected <T extends MasterFragment> T getCurrentFragment();
 }
