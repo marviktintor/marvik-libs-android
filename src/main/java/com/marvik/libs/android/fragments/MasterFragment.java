@@ -38,8 +38,16 @@ public abstract class MasterFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getFragmentTitle() != null) setFragmentTitle(getFragmentTitle());
-        if (getFragmentSubTitle() != null) setFragmentSubTitle(getFragmentSubTitle());
+
+        if (getFragmentTitle() != null) {
+            setFragmentTitle(getFragmentTitle());
+        }
+
+        if (getFragmentSubTitle() != null) {
+            setFragmentSubTitle(getFragmentSubTitle());
+        } else {
+            setFragmentSubTitle(null);
+        }
     }
 
     @Override

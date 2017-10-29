@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -16,6 +17,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.marvik.libs.android.fragments.MasterFragment;
@@ -98,6 +101,16 @@ public abstract class MasterActivity extends AppCompatActivity {
     protected abstract int getActivityLayout();
 
     /**
+     * init the application
+     */
+    protected abstract void initApplication();
+
+    /**
+     * Init all app dependencies
+     */
+    protected abstract void initDependencies();
+
+    /**
      * Called after setContentView
      * Initializes all the views in the activity
      */
@@ -147,9 +160,18 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     /**
      * Returns the drawer layout associated with this activity;
+     *
      * @return
      */
     public abstract DrawerLayout getDrawer();
+
+    /**
+     * Get the default navigation icon for the application
+     *
+     * @return
+     */
+    @DrawableRes
+    public abstract int getDefaultNavigationIcon();
 
     /**
      * Hides the app app bar
@@ -186,9 +208,10 @@ public abstract class MasterActivity extends AppCompatActivity {
         setToolBarVisibility(Toolbar.VISIBLE);
     }
 
-    public void setToolBarVisibility(int visibility){
+    public void setToolBarVisibility(int visibility) {
         getAppToolbar().setVisibility(visibility);
     }
+
     /**
      * Lock the app navigation
      */
@@ -203,7 +226,25 @@ public abstract class MasterActivity extends AppCompatActivity {
     public void unlockNavigation(int navigationIcon) {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
+        getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
+        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
     }
+
+    /**
+     * Called when menu item is clicked
+     *
+     * @param menuItem
+     * @return
+     */
+    public abstract boolean onMenuItemClick(MenuItem menuItem);
+
+    /**
+     * Called when the navigation icon is clicked
+     *
+     * @param view
+     * @return
+     */
+    public abstract boolean onNavigationOnClick(View view);
 
     /**
      * Opend drawer
@@ -451,7 +492,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param fragment
      * @param <T>
      */
-    abstract protected  <T extends MasterFragment> void onPreNavigate(T fragment);
+    abstract protected <T extends MasterFragment> void onPreNavigate(T fragment);
 
     /**
      * Called before
@@ -459,13 +500,13 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param fragment
      * @param <T>
      */
-    abstract protected <T extends MasterFragment>  void onNavigate(T fragment);
+    abstract protected <T extends MasterFragment> void onNavigate(T fragment);
 
-    abstract  protected <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
+    abstract protected <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
 
-    abstract  protected <T extends MasterFragment> void navigateTo(T fragment);
+    abstract protected <T extends MasterFragment> void navigateTo(T fragment);
 
-    abstract  protected <T extends MasterFragment> T getPreviousFragment();
+    abstract protected <T extends MasterFragment> T getPreviousFragment();
 
-    abstract  protected <T extends MasterFragment> T getCurrentFragment();
+    abstract protected <T extends MasterFragment> T getCurrentFragment();
 }
