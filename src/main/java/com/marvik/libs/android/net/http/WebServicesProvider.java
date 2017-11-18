@@ -320,7 +320,7 @@ public abstract class WebServicesProvider<K, V> {
     /**
      * AndroidWebServicesProvider#onHTTPResultsFailed
      * <p>
-     * Called when a the http results are successful
+     * Called when a the http results fail
      *
      * @param resultText
      * @param client
@@ -342,6 +342,19 @@ public abstract class WebServicesProvider<K, V> {
      * @param build
      */
     public abstract void onHttpResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
+
+    /**
+     * AndroidWebServicesProvider#onHttpResultsAmbiguous
+     * <p>
+     * Called when a the http results are ambiguous
+     *
+     * @param resultText
+     * @param client
+     * @param clientAction
+     * @param clientIntent
+     * @param build
+     */
+    public abstract void onHttpResultsAmbiguous(String resultText, String client, String clientAction, String clientIntent, String build);
 
 
     /**
