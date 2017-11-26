@@ -71,14 +71,28 @@ public abstract class WebServicesProvider<K, V> {
      *
      * @param url
      * @param query
+     * @param requestProperties
      */
     public WebServicesProvider(String url, String query, Map<K, V> requestProperties) {
-        urlBuilder = new URLBuilder(url);
-
         setQuery(query);
         setUrl(url);
         setRequestProperties(requestProperties);
 
+    }
+
+    /**
+     * Web services provide class that provides apis
+     * for sending requests to the server and has call
+     * backs to handle errors and provide information that is incoming from the server
+     *
+     * @param urlBuilder
+     * @param requestProperties
+     */
+    public WebServicesProvider(URLBuilder urlBuilder, Map<K, V> requestProperties) {
+        this.urlBuilder = urlBuilder;
+        setQuery(urlBuilder.getQuery());
+        setUrl(urlBuilder.getQuery());
+        setRequestProperties(requestProperties);
     }
 
 
