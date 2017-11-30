@@ -25,7 +25,7 @@ public final class FormValidator {
      * @return
      */
     public static boolean isPersonName(String text) {
-        return text.matches(Pattern.compile("[a-zA-z]").pattern()) && text.split(" ").length > 1;
+        return text.split(" ").length > 1;
     }
 
     /**
