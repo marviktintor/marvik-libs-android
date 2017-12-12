@@ -42,12 +42,11 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     protected ProgressDialog mProgress;
 
-    protected NavigationView mAppNavigation;
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initApplication();
+        initDependencies();
     }
 
     @Override
@@ -84,7 +83,13 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        int backStackCount = getFragmentManager().getBackStackEntryCount();
+
+        if (backStackCount > 1) {
+            getFragmentManager().popBackStack();
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -140,9 +145,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @return
      */
-    public NavigationView getNavigationView() {
-        return mAppNavigation;
-    }
+    public abstract NavigationView getNavigationView();
 
     /**
      * Get the action bar
@@ -218,6 +221,8 @@ public abstract class MasterActivity extends AppCompatActivity {
     public void lockNavigation() {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         getAppToolbar().setNavigationIcon(null);
+        hideToolBar();
+        hideAppBar();
     }
 
     /**
@@ -228,6 +233,8 @@ public abstract class MasterActivity extends AppCompatActivity {
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
         getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+        showAppBar();
+        showToolBar();
     }
 
     /**
@@ -244,7 +251,10 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param view
      * @return
      */
-    public abstract boolean onNavigationOnClick(View view);
+    public boolean onNavigationOnClick(View view) {
+        toggleDrawer();
+        return true;
+    }
 
     /**
      * Opend drawer
@@ -500,13 +510,15 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param fragment
      * @param <T>
      */
-    abstract protected <T extends MasterFragment> void onNavigate(T fragment);
+    abstract public <T extends MasterFragment> void onNavigate(T fragment);
 
-    abstract protected <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
+    abstract public <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
+    
+    public <T extends MasterFragment> void navigateTo(T fragment) {
+        attachFragment(fragment);
+    }
 
-    abstract protected <T extends MasterFragment> void navigateTo(T fragment);
+    abstract public <T extends MasterFragment> T getPreviousFragment();
 
-    abstract protected <T extends MasterFragment> T getPreviousFragment();
-
-    abstract protected <T extends MasterFragment> T getCurrentFragment();
+    abstract public <T extends MasterFragment> T getCurrentFragment();
 }

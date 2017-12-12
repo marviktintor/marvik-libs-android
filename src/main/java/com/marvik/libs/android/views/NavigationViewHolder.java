@@ -54,6 +54,9 @@ public class NavigationViewHolder extends RecyclerView.ViewHolder {
                 getNavigationIconView().setImageDrawable(navigationItems.getDrawableIcon());
                 break;
         }
+
+        mNavigationTitle.setText(navigationItems.getTitle());
+        mNavigationDescription.setText(navigationItems.getSubTitle());
     }
 
     public AppCompatImageView getNavigationIconView() {
