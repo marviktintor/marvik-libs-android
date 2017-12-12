@@ -53,6 +53,7 @@ public abstract class MasterActivity extends AppCompatActivity {
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
+        initDependencies();
         initViews();
         onInitViews();
     }
@@ -231,10 +232,30 @@ public abstract class MasterActivity extends AppCompatActivity {
     }
 
     /**
+     * Lock the app navigation for authentication
+     */
+    public void lockNavigationForAuthentication() {
+        hideAppBar();
+        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        getAppToolbar().setNavigationIcon(null);
+    }
+
+    /**
      * Unlock the app navigation
      */
     public void unlockNavigation(int navigationIcon) {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getAppToolbar().setNavigationIcon(navigationIcon);
+        getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
+        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+    }
+
+    /**
+     * Unlock the app navigation after authentication
+     */
+    public void unlockNavigationAfterAuthentication(int navigationIcon) {
+        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        showAppBar();
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
         getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
