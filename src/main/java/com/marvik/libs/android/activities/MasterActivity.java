@@ -84,7 +84,11 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (getFragmentManager().getBackStackEntryCount() > 1) {
+            super.onBackPressed();
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -172,6 +176,12 @@ public abstract class MasterActivity extends AppCompatActivity {
      */
     @DrawableRes
     public abstract int getDefaultNavigationIcon();
+
+    /**
+     * Should be called after authentication when user information is available and it is time to
+     * update the navigation drawer among other entities showing rich user information
+     */
+    public abstract void onUserInformationAvailable();
 
     /**
      * Hides the app app bar

@@ -1,6 +1,7 @@
 package com.marvik.libs.android.net.http;
 
-import android.util.Patterns;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -10,8 +11,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownServiceException;
+import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 public abstract class WebServicesProvider<K, V> {
@@ -57,6 +59,11 @@ public abstract class WebServicesProvider<K, V> {
     //The request properties sent to the server
     protected Map<K, V> requestProperties;
 
+    public static final String REQUEST_GET = "GET";
+    public static final String REQUEST_POST = "POST";
+    public static final String REQUEST_PUT = "PUT";
+    public static final String REQUEST_DELETE = "DELETE";
+
     /**
      * Web services provide class that provides apis
      * for sending requests to the server and has call
@@ -64,14 +71,28 @@ public abstract class WebServicesProvider<K, V> {
      *
      * @param url
      * @param query
+     * @param requestProperties
      */
     public WebServicesProvider(String url, String query, Map<K, V> requestProperties) {
-        urlBuilder = new URLBuilder(url);
-
         setQuery(query);
         setUrl(url);
         setRequestProperties(requestProperties);
 
+    }
+
+    /**
+     * Web services provide class that provides apis
+     * for sending requests to the server and has call
+     * backs to handle errors and provide information that is incoming from the server
+     *
+     * @param urlBuilder
+     * @param requestProperties
+     */
+    public WebServicesProvider(URLBuilder urlBuilder, Map<K, V> requestProperties) {
+        this.urlBuilder = urlBuilder;
+        setQuery(urlBuilder.getQuery());
+        setUrl(urlBuilder.getQuery());
+        setRequestProperties(requestProperties);
     }
 
 
@@ -156,7 +177,7 @@ public abstract class WebServicesProvider<K, V> {
      * @return
      * @throws IOException
      */
-    public String doHttpRequest(String requestMethod) throws IOException {
+    public String doHttpRequest(String requestMethod) throws IOException, JSONException {
         String dataStream = null;
 
         if (getUrl() == null) {
@@ -168,6 +189,8 @@ public abstract class WebServicesProvider<K, V> {
             onConnectionError(ERROR_TYPE_INVALID_URL);
             throw new IllegalArgumentException("Invalid URL [" + getUrl() + "]");
         }
+
+        onStart();
 
         URL url = new URL(getUrl());
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -181,47 +204,91 @@ public abstract class WebServicesProvider<K, V> {
         }
 
 
-        httpURLConnection.setDoOutput(true);
-        //httpURLConnection.setDoInput(true);
+        if (requestMethod.equalsIgnoreCase(REQUEST_GET)) {
 
-        OutputStream outputStream = httpURLConnection.getOutputStream();
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            httpURLConnection.setDoInput(true);
 
-        if (getQuery() != null) {
-            dataOutputStream.writeBytes(getQuery());
-            onSendQuery();
+            onConnect(httpURLConnection.getResponseCode());
+
+            InputStream inputStream = httpURLConnection.getInputStream();
+
+            onReceiveResponse();
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuilder builder = new StringBuilder();
+
+            while ((dataStream = bufferedReader.readLine()) != null) {
+                onReadResponse(dataStream);
+
+                builder.append(dataStream);
+                onAppendResponse(builder.toString());
+            }
+
+            dataStream = builder.toString();
+
+
+            setHTTPResponse(dataStream);
+
+            onFinishedReadingResponse(dataStream);
+
+            onFinish();
+
+            return dataStream;
+
+        } else if (requestMethod.equalsIgnoreCase(REQUEST_POST) ||
+                requestMethod.equalsIgnoreCase(REQUEST_PUT) ||
+                requestMethod.equalsIgnoreCase(REQUEST_DELETE)) {
+
+            httpURLConnection.setDoOutput(true);
+
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+
+            if (getQuery() != null) {
+                dataOutputStream.writeBytes(getQuery());
+                onSendQuery();
+            }
+
+            dataOutputStream.flush();
+            dataOutputStream.close();
+
+            onConnect(httpURLConnection.getResponseCode());
+
+            InputStream inputStream = httpURLConnection.getInputStream();
+
+            onReceiveResponse();
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuilder builder = new StringBuilder();
+
+            while ((dataStream = bufferedReader.readLine()) != null) {
+                onReadResponse(dataStream);
+
+                builder.append(dataStream);
+                onAppendResponse(builder.toString());
+            }
+
+            dataStream = builder.toString();
+
+
+            setHTTPResponse(dataStream);
+
+            onFinishedReadingResponse(dataStream);
+
+            onFinish();
+
+            return dataStream;
+
+        } else {
+            throw new UnknownServiceException(String.format(Locale.getDefault(), "Unknown request method %s ", requestMethod));
         }
 
-        dataOutputStream.flush();
-        dataOutputStream.close();
-
-        onConnect(httpURLConnection.getResponseCode());
-
-        InputStream inputStream = httpURLConnection.getInputStream();
-        onReceiveResponse();
-
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-        StringBuilder builder = new StringBuilder();
-
-        while ((dataStream = bufferedReader.readLine()) != null) {
-            onReadResponse(dataStream);
-
-            builder.append(dataStream);
-            onAppendResponse(builder.toString());
-        }
-
-        dataStream = builder.toString();
-
-
-        setHTTPResponse(dataStream);
-
-        onFinishedReadingResponse(dataStream);
-
-
-        return dataStream;
 
     }
 
@@ -231,8 +298,9 @@ public abstract class WebServicesProvider<K, V> {
      * @param url
      * @return
      */
+
     protected boolean isValidUrl(String url) {
-        return Pattern.matches(Patterns.WEB_URL.pattern(), url);
+        return url != null;
     }
 
     /**
@@ -241,7 +309,7 @@ public abstract class WebServicesProvider<K, V> {
      * @return server response
      * @throws IOException
      */
-    public String doGetHttpRequest() throws IOException {
+    public String doGetHttpRequest() throws IOException, JSONException {
         return doHttpRequest("GET");
     }
 
@@ -251,8 +319,28 @@ public abstract class WebServicesProvider<K, V> {
      * @return server response
      * @throws IOException
      */
-    public String doPostHttpRequest() throws IOException {
+    public String doPostHttpRequest() throws IOException, JSONException {
         return doHttpRequest("POST");
+    }
+
+    /**
+     * Performs a PUT HTTP Request and return the server response in form of a String
+     *
+     * @return server response
+     * @throws IOException
+     */
+    public String doPutHttpRequest() throws IOException, JSONException {
+        return doHttpRequest("PUT");
+    }
+
+    /**
+     * Performs a DELETE HTTP Request and return the server response in form of a String
+     *
+     * @return server response
+     * @throws IOException
+     */
+    public String doDeleteHttpRequest() throws IOException, JSONException {
+        return doHttpRequest("DELETE");
     }
 
     /**
@@ -261,6 +349,11 @@ public abstract class WebServicesProvider<K, V> {
      * @return the set url
      */
     public abstract String onSetURL();
+
+    /**
+     * Called when the HTTP Process starts
+     */
+    public abstract void onStart();
 
 
     /**
@@ -308,7 +401,12 @@ public abstract class WebServicesProvider<K, V> {
      *
      * @param readResponse
      */
-    public abstract void onFinishedReadingResponse(String readResponse);
+    public abstract void onFinishedReadingResponse(String readResponse) throws JSONException;
+
+    /**
+     * Called when the HTTP Process ends
+     */
+    public abstract void onFinish();
 
     /**
      * Called when an error has occurred making a HTTP_CONNECTION
@@ -320,7 +418,7 @@ public abstract class WebServicesProvider<K, V> {
     /**
      * AndroidWebServicesProvider#onHTTPResultsFailed
      * <p>
-     * Called when a the http results fail
+     * Called when a the http results have failed
      *
      * @param resultText
      * @param client
@@ -341,7 +439,7 @@ public abstract class WebServicesProvider<K, V> {
      * @param clientIntent
      * @param build
      */
-    public abstract void onHttpResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build);
+    public abstract void onHttpResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build) throws JSONException;
 
     /**
      * AndroidWebServicesProvider#onHttpResultsAmbiguous
@@ -355,7 +453,6 @@ public abstract class WebServicesProvider<K, V> {
      * @param build
      */
     public abstract void onHttpResultsAmbiguous(String resultText, String client, String clientAction, String clientIntent, String build);
-
 
     /**
      * @return the set http response
