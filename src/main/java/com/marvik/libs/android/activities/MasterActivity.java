@@ -254,8 +254,8 @@ public abstract class MasterActivity extends AppCompatActivity {
      * Unlock the app navigation after authentication
      */
     public void unlockNavigationAfterAuthentication(int navigationIcon) {
-        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         showAppBar();
+        getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
         getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
