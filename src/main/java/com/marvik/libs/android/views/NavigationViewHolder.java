@@ -40,6 +40,10 @@ public class NavigationViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(NavigationItems navigationItems) {
+
+        mNavigationTitle.setText(navigationItems.getTitle());
+        mNavigationDescription.setText(navigationItems.getSubTitle());
+                
         switch (navigationItems.getIconType()) {
             case RES_ICON:
                 getNavigationIconView().setImageResource(navigationItems.getResIcon());
