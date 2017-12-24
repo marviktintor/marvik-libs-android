@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -44,6 +43,7 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     protected NavigationView mAppNavigation;
 
+    protected AlertDialog.Builder mAlert;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -427,33 +427,34 @@ public abstract class MasterActivity extends AppCompatActivity {
     public void showAlertDialog(Context context, String title, String message, String positiveButtonLabel,
                                 final Intent positiveIntent, String negativeButtonLabel, final Intent negativeIntent) {
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle(title);
-        alert.setMessage(message);
+        if (mAlert == null) {
+            mAlert = new AlertDialog.Builder(context);
+        }
+
+        if (mAlert.create().isShowing()) {
+            mAlert.create().cancel();
+        }
+
+        mAlert.setTitle(title);
+        mAlert.setMessage(message);
 
         if (positiveButtonLabel != null) {
-            alert.setPositiveButton(positiveButtonLabel, (new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    if (positiveIntent != null) {
-                        sendBroadcast(positiveIntent);
-                    }
+            mAlert.setPositiveButton(positiveButtonLabel, ((dialogInterface, i) -> {
+                if (positiveIntent != null) {
+                    sendBroadcast(positiveIntent);
                 }
             }));
         }
 
         if (negativeButtonLabel != null) {
-            alert.setNegativeButton(negativeButtonLabel, (new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    if (negativeIntent != null) {
-                        MasterActivity.this.sendBroadcast(negativeIntent);
-                    }
+            mAlert.setNegativeButton(negativeButtonLabel, ((dialogInterface, i) -> {
+                if (negativeIntent != null) {
+                    MasterActivity.this.sendBroadcast(negativeIntent);
                 }
             }));
         }
 
-        alert.show();
+        mAlert.show();
     }
 
     /**
