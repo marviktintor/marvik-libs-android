@@ -61,6 +61,7 @@ public abstract class MasterActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceivers();
     }
 
     @Override
@@ -95,6 +96,7 @@ public abstract class MasterActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceivers();
     }
 
     /**
@@ -125,6 +127,17 @@ public abstract class MasterActivity extends AppCompatActivity {
      * Called after all views have been init and its the right time to attach event listeners
      */
     protected abstract void onInitViews();
+
+    /**
+     * Registers the intents to be listened by the broadcast receiver
+     */
+    protected abstract void registerReceivers();
+
+    /**
+     * Unregisters the intents listened by the broadcasts receiver
+     */
+    protected abstract void unregisterReceivers();
+
 
     /**
      * Get the root container layout associated with this activity
