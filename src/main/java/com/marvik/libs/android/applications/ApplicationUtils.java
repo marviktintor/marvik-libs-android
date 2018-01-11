@@ -424,7 +424,7 @@ public class ApplicationUtils {
      *
      * @return
      */
-    public NotificationCompat.Builder getNotificationBuilder(Context context) {
+    public static NotificationCompat.Builder getNotificationBuilder(Context context) {
         return new NotificationCompat.Builder(context);
     }
 
@@ -439,9 +439,9 @@ public class ApplicationUtils {
      * @param contentIntent
      * @param defaults
      */
-    public void sendExplicitNotification(Context context, int smallIcon, Bitmap largeIcon, String title, String contentText,
-                                         NotificationCompat.Action[] actions, PendingIntent contentIntent,
-                                         int defaults, int priority) {
+    public static void sendExplicitNotification(Context context, int smallIcon, Bitmap largeIcon, String title, String contentText,
+                                                NotificationCompat.Action[] actions, PendingIntent contentIntent,
+                                                int defaults, int priority) {
 
         NotificationCompat.Builder builder = getNotificationBuilder(context).
                 setContentTitle(title).setContentText(contentText)
@@ -449,9 +449,12 @@ public class ApplicationUtils {
                 .setSmallIcon(smallIcon).setPriority(priority)
                 .setLargeIcon(largeIcon);
 
-        for (NotificationCompat.Action action : actions) {
-            builder.addAction(action);
+        if (actions != null) {
+            for (NotificationCompat.Action action : actions) {
+                builder.addAction(action);
+            }
         }
+
 
         sendNotification(context, builder.build(), 1);
     }
@@ -461,8 +464,19 @@ public class ApplicationUtils {
      *
      * @param notification
      */
-    public void sendNotification(Context context, Notification notification, int notificationId) {
+    public static void sendNotification(Context context, Notification notification, int notificationId) {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(notificationId, notification);
+    }
+
+    /**
+     * Cancel a notification
+     *
+     * @param context
+     * @param notificationId
+     */
+    public static void cancelNotification(Context context, int notificationId) {
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.cancel(notificationId);
     }
 }
