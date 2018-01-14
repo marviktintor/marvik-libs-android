@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
@@ -15,7 +16,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,10 +222,27 @@ public abstract class MasterActivity extends AppCompatActivity {
     }
 
     /**
-     * Hides the toolbar
+     * Hides the action bar
      */
-    public void hideToolBarLazy() {
+    public void hideActionBars() {
         setToolBarVisibility(Toolbar.INVISIBLE);
+        setAppToolBarVisibility(AppBarLayout.INVISIBLE);
+    }
+
+    /**
+     * removes the action bar
+     */
+    public void blowActionBars() {
+        setToolBarVisibility(Toolbar.GONE);
+        setAppToolBarVisibility(AppBarLayout.GONE);
+    }
+
+    /**
+     * removes the action bar
+     */
+    public void showActionBars() {
+        setToolBarVisibility(Toolbar.VISIBLE);
+        setAppToolBarVisibility(AppBarLayout.VISIBLE);
     }
 
     /**
@@ -234,6 +254,10 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     public void setToolBarVisibility(int visibility) {
         getAppToolbar().setVisibility(visibility);
+    }
+
+    public void setAppToolBarVisibility(int visibility) {
+        getAppBarLayout().setVisibility(visibility);
     }
 
     /**
@@ -554,4 +578,57 @@ public abstract class MasterActivity extends AppCompatActivity {
     abstract protected <T extends MasterFragment> T getPreviousFragment();
 
     abstract protected <T extends MasterFragment> T getCurrentFragment();
+
+    /**
+     * Apply profile colors for specific fragments when previewing specific images
+     *
+     * @param palette
+     * @param defaultDarkColor
+     * @param defaultLightColor
+     */
+    public void applyProfileColors(Palette palette, int defaultDarkColor, int defaultLightColor) {
+
+        int darkVibrantColor = palette.getDarkVibrantColor(defaultDarkColor);
+        int lightVibrantColor = palette.getLightVibrantColor(defaultLightColor);
+
+        Palette.Swatch darkVibrantSwatch = palette.getDarkVibrantSwatch();
+
+        if (getAppToolbar() != null) {
+            getAppToolbar().setBackgroundColor(lightVibrantColor);
+
+            if (darkVibrantSwatch != null) {
+                getAppToolbar().setTitleTextColor(darkVibrantSwatch.getTitleTextColor());
+            }
+        } else {
+            Log.i(getClass().getSimpleName().toUpperCase(), "applyProfileColors: FAILED");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(darkVibrantColor);
+        }
+    }
+
+    /**
+     * Apply default profile colors
+     *
+     * @param defaultDarkColor
+     * @param defaultLightColor
+     */
+    public void resetProfileColors(int defaultDarkColor, int defaultLightColor, int defaultTitleTextColor) {
+
+
+        if (getAppToolbar() != null) {
+            getAppToolbar().setBackgroundColor(defaultLightColor);
+
+
+            getAppToolbar().setTitleTextColor(defaultTitleTextColor);
+
+        } else {
+            Log.i(getClass().getSimpleName().toUpperCase(), "resetProfileColors: FAILED");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(defaultDarkColor);
+        }
+    }
 }
