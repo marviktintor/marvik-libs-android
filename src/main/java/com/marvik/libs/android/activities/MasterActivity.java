@@ -573,7 +573,7 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     abstract protected <T extends MasterFragment> void onPostNavigate(T newFragment, T oldFragment);
 
-    abstract protected <T extends MasterFragment> void navigateTo(T fragment);
+    public abstract <T extends MasterFragment> void navigateTo(T fragment);
 
     abstract protected <T extends MasterFragment> T getPreviousFragment();
 
