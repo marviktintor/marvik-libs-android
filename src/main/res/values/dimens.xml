@@ -14,6 +14,6 @@
     <dimen name="line_height_thick">2dp</dimen>
     <dimen name="default_view_padding_small">5dp</dimen>
     <dimen name="no_padding">0dp</dimen>
-    <dimen name="min_image_height">40dp</dimen>
-    <dimen name="min_image_width">40dp</dimen>
+    <dimen name="min_image_height">60dp</dimen>
+    <dimen name="min_image_width">50dp</dimen>
 </resources>
