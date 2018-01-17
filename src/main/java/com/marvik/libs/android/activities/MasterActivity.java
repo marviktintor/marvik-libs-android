@@ -588,7 +588,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      */
     public void applyProfileColors(Palette palette, int defaultDarkColor, int defaultLightColor) {
 
-        int darkVibrantColor = palette.getDarkVibrantColor(defaultDarkColor);
+        int darkVibrantColor = palette.getVibrantColor(defaultDarkColor);
         int lightVibrantColor = palette.getLightVibrantColor(defaultLightColor);
 
         Palette.Swatch darkVibrantSwatch = palette.getDarkVibrantSwatch();
