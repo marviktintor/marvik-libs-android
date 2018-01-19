@@ -486,7 +486,7 @@ public abstract class MasterActivity extends AppCompatActivity {
         if (negativeButtonLabel != null) {
             mAlert.setNegativeButton(negativeButtonLabel, ((dialogInterface, i) -> {
                 if (negativeIntent != null) {
-                    MasterActivity.this.sendBroadcast(negativeIntent);
+                    sendBroadcast(negativeIntent);
                 }
             }));
         }
