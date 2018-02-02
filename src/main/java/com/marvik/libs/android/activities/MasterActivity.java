@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -185,6 +187,17 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @return
      */
     public abstract DrawerLayout getDrawer();
+
+    /**
+     * Get the navigation header at position
+     *
+     * @param childPosition
+     * @return
+     */
+
+    public View getHeaderView(int childPosition) {
+        return getNavigationView().getHeaderView(childPosition);
+    }
 
     /**
      * Get the default navigation icon for the application
@@ -428,13 +441,41 @@ public abstract class MasterActivity extends AppCompatActivity {
         getFragmentManager().popBackStack(getPackageName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
-
     /**
      * Create invite friend intent
      *
      * @return
      */
-    public abstract Intent getInviteFriendIntent();
+    public Intent getInviteFriendIntent(String messageText) {
+        try {
+            String playStoreDownload = getAppShortenedPlayStoreDownloadLink().toString();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, messageText);
+            return intent;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Create rate application intent
+     *
+     * @return
+     */
+
+    public Intent getRateApplicationIntent() {
+        try {
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format("market://details?id=%s", getPackageName())));
+        } catch (ActivityNotFoundException e) {
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format("https://play.google.com/store/app/details?id=%s", getPackageName())));
+        }
+    }
+
 
     /**
      * Get the root container id on which all views are children of
