@@ -312,6 +312,11 @@ public abstract class MasterActivity extends AppCompatActivity {
     }
 
     /**
+     * Attaches all the event listeners of an activity
+     */
+    protected abstract void attachActivityEventListeners();
+
+    /**
      * Called when menu item is clicked
      *
      * @param menuItem
