@@ -46,8 +46,6 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     protected ProgressDialog mProgress;
 
-    protected NavigationView mAppNavigation;
-
     protected AlertDialog.Builder mAlert;
 
     @Override
@@ -163,9 +161,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @return
      */
-    public NavigationView getNavigationView() {
-        return mAppNavigation;
-    }
+    public abstract NavigationView getNavigationView();
 
     /**
      * Get the action bar
