@@ -117,7 +117,23 @@ public abstract class MasterFragment extends Fragment {
     protected void showAlertDialog(String title, String message, String positiveButtonLabel,
                                    Intent positiveIntent, String negativeButtonLabel, Intent negativeIntent) {
         ((MasterActivity) getActivity()).showAlertDialog(getActivity(), title, message, positiveButtonLabel,
-                positiveIntent, negativeButtonLabel, negativeIntent);
+                positiveIntent, negativeButtonLabel, negativeIntent, true);
+    }
+
+    /**
+     * Show alert dialog
+     *
+     * @param title
+     * @param message
+     * @param positiveButtonLabel
+     * @param positiveIntent
+     * @param negativeButtonLabel
+     * @param negativeIntent
+     */
+    protected void showAlertDialog(String title, String message, String positiveButtonLabel,
+                                   Intent positiveIntent, String negativeButtonLabel, Intent negativeIntent, boolean cancellable) {
+        ((MasterActivity) getActivity()).showAlertDialog(getActivity(), title, message, positiveButtonLabel,
+                positiveIntent, negativeButtonLabel, negativeIntent, cancellable);
     }
 
     /**

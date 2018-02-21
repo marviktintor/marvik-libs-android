@@ -504,7 +504,26 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param negativeIntent
      */
     public void showAlertDialog(Context context, String title, String message, String positiveButtonLabel,
-                                final Intent positiveIntent, String negativeButtonLabel, final Intent negativeIntent) {
+                                final Intent positiveIntent, String negativeButtonLabel,
+                                final Intent negativeIntent) {
+        this.showAlertDialog(context, title, message, positiveButtonLabel, positiveIntent,
+                negativeButtonLabel, negativeIntent, true);
+    }
+
+    /**
+     * Show an alert dialog
+     *
+     * @param context
+     * @param title
+     * @param message
+     * @param positiveButtonLabel
+     * @param positiveIntent
+     * @param negativeButtonLabel
+     * @param negativeIntent
+     */
+    public void showAlertDialog(Context context, String title, String message, String positiveButtonLabel,
+                                final Intent positiveIntent, String negativeButtonLabel, final Intent negativeIntent,
+                                boolean cancellable) {
 
         if (mAlert == null) {
             mAlert = new AlertDialog.Builder(context);
@@ -532,7 +551,7 @@ public abstract class MasterActivity extends AppCompatActivity {
                 }
             }));
         }
-
+        mAlert.setCancelable(cancellable);
         mAlert.show();
     }
 
