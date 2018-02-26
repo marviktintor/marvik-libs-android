@@ -59,6 +59,7 @@ public abstract class MasterActivity extends AppCompatActivity {
         initDependencies();
         initViews();
         onInitViews();
+        attachActivityEventListeners();
     }
 
     @Override
@@ -132,6 +133,11 @@ public abstract class MasterActivity extends AppCompatActivity {
     protected abstract void onInitViews();
 
     /**
+     * Attach activity event listeners. Called after init all views
+     */
+    protected abstract void attachActivityEventListeners();
+
+    /**
      * Registers the intents to be listened by the broadcast receiver
      */
     protected abstract void registerReceivers();
@@ -165,6 +171,14 @@ public abstract class MasterActivity extends AppCompatActivity {
         return mAppNavigation;
     }
 
+    /**
+     * Return header view at index
+     * @param index
+     * @return headerView
+     */
+    public View getHeaderView(int index){
+        return getNavigationView().getHeaderView(index);
+    }
     /**
      * Get the action bar
      *
@@ -435,6 +449,13 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @return
      */
     public abstract Intent getInviteFriendIntent();
+
+    /**
+     * Create rate application intent
+     *
+     * @return
+     */
+    public abstract Intent getRateApplicationIntent();
 
     /**
      * Get the root container id on which all views are children of
