@@ -291,9 +291,11 @@ public abstract class MasterActivity extends AppCompatActivity {
      */
     public void unlockNavigation(int navigationIcon) {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        showActionBars();
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
         getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
+        getNavigationView().setNavigationItemSelectedListener(this::onNavigationItemClick);
     }
 
     /**
@@ -305,6 +307,7 @@ public abstract class MasterActivity extends AppCompatActivity {
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
         getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
+        getNavigationView().setNavigationItemSelectedListener(this::onNavigationItemClick);
     }
 
     /**
@@ -313,12 +316,20 @@ public abstract class MasterActivity extends AppCompatActivity {
     protected abstract void attachActivityEventListeners();
 
     /**
-     * Called when menu item is clicked
+     * Called when toolbar menu item is clicked
      *
      * @param menuItem
      * @return
      */
     public abstract boolean onMenuItemClick(MenuItem menuItem);
+
+    /**
+     * Called when navigation menu item is clicked
+     *
+     * @param menuItem
+     * @return
+     */
+    public abstract boolean onNavigationItemClick(MenuItem menuItem);
 
     /**
      * Called when the navigation icon is clicked
