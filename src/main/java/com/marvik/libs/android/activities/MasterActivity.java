@@ -293,7 +293,7 @@ public abstract class MasterActivity extends AppCompatActivity {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
-        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+        getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
     }
 
     /**
@@ -304,7 +304,7 @@ public abstract class MasterActivity extends AppCompatActivity {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
-        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+        getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
     }
 
     /**
@@ -326,7 +326,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @param view
      * @return
      */
-    public abstract boolean onNavigationOnClick(View view);
+    public abstract boolean onClickNavigationIcon(View view);
 
     /**
      * Opend drawer
