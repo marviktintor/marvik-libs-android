@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -43,8 +45,6 @@ import java.net.URL;
 public abstract class MasterActivity extends AppCompatActivity {
 
     protected ProgressDialog mProgress;
-
-    protected NavigationView mAppNavigation;
 
     protected AlertDialog.Builder mAlert;
 
@@ -167,9 +167,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      *
      * @return
      */
-    public NavigationView getNavigationView() {
-        return mAppNavigation;
-    }
+    public abstract NavigationView getNavigationView();
 
     /**
      * Return header view at index
@@ -199,6 +197,17 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @return
      */
     public abstract DrawerLayout getDrawer();
+
+    /**
+     * Get the navigation header at position
+     *
+     * @param childPosition
+     * @return
+     */
+
+    public View getHeaderView(int childPosition) {
+        return getNavigationView().getHeaderView(childPosition);
+    }
 
     /**
      * Get the default navigation icon for the application
@@ -296,9 +305,11 @@ public abstract class MasterActivity extends AppCompatActivity {
      */
     public void unlockNavigation(int navigationIcon) {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        showActionBars();
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
-        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+        getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
+        getNavigationView().setNavigationItemSelectedListener(this::onNavigationItemClick);
     }
 
     /**
@@ -309,11 +320,17 @@ public abstract class MasterActivity extends AppCompatActivity {
         getDrawer().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         getAppToolbar().setNavigationIcon(navigationIcon);
         getAppToolbar().setOnMenuItemClickListener(this::onMenuItemClick);
-        getAppToolbar().setNavigationOnClickListener(this::onNavigationOnClick);
+        getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
+        getNavigationView().setNavigationItemSelectedListener(this::onNavigationItemClick);
     }
 
     /**
-     * Called when menu item is clicked
+     * Attaches all the event listeners of an activity
+     */
+    protected abstract void attachActivityEventListeners();
+
+    /**
+     * Called when toolbar menu item is clicked
      *
      * @param menuItem
      * @return
@@ -321,12 +338,20 @@ public abstract class MasterActivity extends AppCompatActivity {
     public abstract boolean onMenuItemClick(MenuItem menuItem);
 
     /**
+     * Called when navigation menu item is clicked
+     *
+     * @param menuItem
+     * @return
+     */
+    public abstract boolean onNavigationItemClick(MenuItem menuItem);
+
+    /**
      * Called when the navigation icon is clicked
      *
      * @param view
      * @return
      */
-    public abstract boolean onNavigationOnClick(View view);
+    public abstract boolean onClickNavigationIcon(View view);
 
     /**
      * Opend drawer
@@ -442,13 +467,41 @@ public abstract class MasterActivity extends AppCompatActivity {
         getFragmentManager().popBackStack(getPackageName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
-
     /**
      * Create invite friend intent
      *
      * @return
      */
-    public abstract Intent getInviteFriendIntent();
+    public Intent getInviteFriendIntent(String messageText) {
+        try {
+            String playStoreDownload = getAppShortenedPlayStoreDownloadLink().toString();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, messageText);
+            return intent;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Create rate application intent
+     *
+     * @return
+     */
+
+    public Intent getRateApplicationIntent() {
+        try {
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format("market://details?id=%s", getPackageName())));
+        } catch (ActivityNotFoundException e) {
+            return new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(String.format("https://play.google.com/store/app/details?id=%s", getPackageName())));
+        }
+    }
+
 
     /**
      * Create rate application intent
