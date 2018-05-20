@@ -199,17 +199,6 @@ public abstract class MasterActivity extends AppCompatActivity {
     public abstract DrawerLayout getDrawer();
 
     /**
-     * Get the navigation header at position
-     *
-     * @param childPosition
-     * @return
-     */
-
-    public View getHeaderView(int childPosition) {
-        return getNavigationView().getHeaderView(childPosition);
-    }
-
-    /**
      * Get the default navigation icon for the application
      *
      * @return
@@ -323,11 +312,6 @@ public abstract class MasterActivity extends AppCompatActivity {
         getAppToolbar().setNavigationOnClickListener(this::onClickNavigationIcon);
         getNavigationView().setNavigationItemSelectedListener(this::onNavigationItemClick);
     }
-
-    /**
-     * Attaches all the event listeners of an activity
-     */
-    protected abstract void attachActivityEventListeners();
 
     /**
      * Called when toolbar menu item is clicked
@@ -502,13 +486,6 @@ public abstract class MasterActivity extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * Create rate application intent
-     *
-     * @return
-     */
-    public abstract Intent getRateApplicationIntent();
 
     /**
      * Get the root container id on which all views are children of
