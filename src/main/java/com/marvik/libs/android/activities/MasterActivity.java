@@ -163,6 +163,13 @@ public abstract class MasterActivity extends AppCompatActivity {
     public abstract ViewGroup getContainer();
 
     /**
+     * Get the container layout where content from other fragments is attached
+     *
+     * @return
+     */
+    public abstract ViewGroup getContent();
+
+    /**
      * Get the navigation view associated with this activity
      *
      * @return
@@ -171,12 +178,14 @@ public abstract class MasterActivity extends AppCompatActivity {
 
     /**
      * Return header view at index
+     *
      * @param index
      * @return headerView
      */
-    public View getHeaderView(int index){
+    public View getHeaderView(int index) {
         return getNavigationView().getHeaderView(index);
     }
+
     /**
      * Get the action bar
      *
@@ -419,7 +428,7 @@ public abstract class MasterActivity extends AppCompatActivity {
      * @return backStackEntryCount
      */
     public int attachFragment(Fragment fragment, boolean addToBackStack) {
-        return attachFragment(fragment, getContainerId(), addToBackStack);
+        return attachFragment(fragment, getContentId(), addToBackStack);
     }
 
     /**
@@ -495,11 +504,18 @@ public abstract class MasterActivity extends AppCompatActivity {
     public abstract int getRootContainerId();
 
     /**
-     * Get the container id of the view that fragments should be attached
+     * Get the container id of the parent view that fragments should be attached
      *
      * @return
      */
     public abstract int getContainerId();
+
+    /**
+     * Get the content id of the view that fragments should be attached
+     *
+     * @return
+     */
+    public abstract int getContentId();
 
     /**
      * Show an alert dialog
