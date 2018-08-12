@@ -20,11 +20,11 @@ import com.marvik.libs.android.models.navigation.NavigationItems;
  * Created by victor on 06-Nov-17 at 8:28 AM.
  */
 
-public class NavigationViewHolder extends RecyclerView.ViewHolder {
+public  class NavigationViewHolder extends RecyclerView.ViewHolder {
 
-    private AppCompatImageView mNavigationIcon;
-    private AppCompatTextView mNavigationTitle;
-    private AppCompatTextView mNavigationDescription;
+    protected AppCompatImageView mNavigationIcon;
+    protected AppCompatTextView mNavigationTitle;
+    protected AppCompatTextView mNavigationDescription;
 
     /**
      * Navigation View Holder
@@ -33,32 +33,8 @@ public class NavigationViewHolder extends RecyclerView.ViewHolder {
      */
     public NavigationViewHolder(View itemView) {
         super(itemView);
-
-        mNavigationIcon = itemView.findViewById(R.id.navigation_icon);
-        mNavigationTitle = itemView.findViewById(R.id.navigation_title);
-        mNavigationDescription = itemView.findViewById(R.id.navigation_description);
     }
 
-    public void bindData(NavigationItems navigationItems) {
-
-        mNavigationTitle.setText(navigationItems.getTitle());
-        mNavigationDescription.setText(navigationItems.getSubTitle());
-                
-        switch (navigationItems.getIconType()) {
-            case RES_ICON:
-                getNavigationIconView().setImageResource(navigationItems.getResIcon());
-                break;
-            case BITMAP_ICON:
-                getNavigationIconView().setImageBitmap(navigationItems.getBitmapIcon());
-                break;
-            case URI_ICON:
-                getNavigationIconView().setImageURI(navigationItems.getUriIcon());
-                break;
-            case DRAWABLE_ICON:
-                getNavigationIconView().setImageDrawable(navigationItems.getDrawableIcon());
-                break;
-        }
-    }
 
     public AppCompatImageView getNavigationIconView() {
         return mNavigationIcon;
