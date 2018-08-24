@@ -717,4 +717,29 @@ public abstract class MasterActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(defaultDarkColor);
         }
     }
+
+    /**
+     * Customize toolbar colors
+     *
+     * @param colorPrimary
+     * @param colorPrimaryDark
+     * @param titleColor
+     * @param subtitleColor
+     */
+    public void customizeToolbar(int colorPrimary, int colorPrimaryDark, int titleColor, int subtitleColor) {
+
+
+        if (getAppToolbar() != null) {
+            getAppToolbar().setBackgroundColor(colorPrimary);
+            getAppToolbar().setTitleTextColor(titleColor);
+            getAppToolbar().setSubtitleTextColor(subtitleColor);
+
+        } else {
+            Log.i(getClass().getSimpleName().toUpperCase(), "resetProfileColors: FAILED");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(colorPrimaryDark);
+        }
+    }
 }
