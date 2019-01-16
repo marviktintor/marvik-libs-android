@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.Map;
 
 
-public abstract class AndroidWebServicesProvider<K, V> extends WebServicesProvider<K, V> {
+public abstract class AndroidHTTPWebServicesProvider<K, V> extends HTTPWebServicesProvider<K, V> {
 
     protected Context mContext;
 
@@ -17,7 +17,7 @@ public abstract class AndroidWebServicesProvider<K, V> extends WebServicesProvid
      * @param url
      * @param query
      */
-    public AndroidWebServicesProvider(Context context, String url, String query, Map<K, V> requestProperties) {
+    public AndroidHTTPWebServicesProvider(Context context, String url, String query, Map<K, V> requestProperties) {
         super(url, query, requestProperties);
 
         this.mContext = context;

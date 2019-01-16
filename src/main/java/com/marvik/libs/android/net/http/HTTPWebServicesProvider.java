@@ -9,14 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownServiceException;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
-public abstract class WebServicesProvider<K, V> {
+
+public abstract class HTTPWebServicesProvider<K, V> {
 
     /**
      * HTTP ERROR
@@ -73,7 +76,7 @@ public abstract class WebServicesProvider<K, V> {
      * @param query
      * @param requestProperties
      */
-    public WebServicesProvider(String url, String query, Map<K, V> requestProperties) {
+    public HTTPWebServicesProvider(String url, String query, Map<K, V> requestProperties) {
         setQuery(query);
         setUrl(url);
         setRequestProperties(requestProperties);
@@ -88,7 +91,7 @@ public abstract class WebServicesProvider<K, V> {
      * @param urlBuilder
      * @param requestProperties
      */
-    public WebServicesProvider(URLBuilder urlBuilder, Map<K, V> requestProperties) {
+    public HTTPWebServicesProvider(URLBuilder urlBuilder, Map<K, V> requestProperties) {
         this.urlBuilder = urlBuilder;
         setQuery(urlBuilder.getQuery());
         setUrl(urlBuilder.getQuery());
@@ -170,6 +173,19 @@ public abstract class WebServicesProvider<K, V> {
         return getQuery();
     }
 
+    /**
+     * Get SSL Socket Factory
+     *
+     * @return
+     */
+    protected abstract SSLSocketFactory getSSLSocketFactory();
+
+    /**
+     * Get host name verifier
+     *
+     * @return
+     */
+    protected abstract HostnameVerifier getHostNameVerifier();
 
     /**
      * Performs an HTTP Request and return the server response in form of a String
@@ -193,24 +209,26 @@ public abstract class WebServicesProvider<K, V> {
         onStart();
 
         URL url = new URL(getUrl());
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestMethod(requestMethod);
+        HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+        httpsURLConnection.setRequestMethod(requestMethod);
 
+        httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
+        httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
 
         if (getRequestProperties() != null) {
             for (Map.Entry<K, V> entries : getRequestProperties().entrySet()) {
-                httpURLConnection.setRequestProperty(String.valueOf(entries.getKey()), String.valueOf(entries.getValue()));
+                httpsURLConnection.setRequestProperty(String.valueOf(entries.getKey()), String.valueOf(entries.getValue()));
             }
         }
 
 
         if (requestMethod.equalsIgnoreCase(REQUEST_GET)) {
 
-            httpURLConnection.setDoInput(true);
+            httpsURLConnection.setDoInput(true);
 
-            onConnect(httpURLConnection.getResponseCode());
+            onConnect(httpsURLConnection.getResponseCode());
 
-            InputStream inputStream = httpURLConnection.getInputStream();
+            InputStream inputStream = httpsURLConnection.getInputStream();
 
             onReceiveResponse();
 
@@ -242,9 +260,9 @@ public abstract class WebServicesProvider<K, V> {
                 requestMethod.equalsIgnoreCase(REQUEST_PUT) ||
                 requestMethod.equalsIgnoreCase(REQUEST_DELETE)) {
 
-            httpURLConnection.setDoOutput(true);
+            httpsURLConnection.setDoOutput(true);
 
-            OutputStream outputStream = httpURLConnection.getOutputStream();
+            OutputStream outputStream = httpsURLConnection.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
 
             if (getQuery() != null) {
@@ -255,9 +273,9 @@ public abstract class WebServicesProvider<K, V> {
             dataOutputStream.flush();
             dataOutputStream.close();
 
-            onConnect(httpURLConnection.getResponseCode());
+            onConnect(httpsURLConnection.getResponseCode());
 
-            InputStream inputStream = httpURLConnection.getInputStream();
+            InputStream inputStream = httpsURLConnection.getInputStream();
 
             onReceiveResponse();
 
@@ -416,7 +434,7 @@ public abstract class WebServicesProvider<K, V> {
     public abstract void onConnectionError(int errorCode);
 
     /**
-     * AndroidWebServicesProvider#onHTTPResultsFailed
+     * AndroidHTTPSWebServicesProvider#onHTTPResultsFailed
      * <p>
      * Called when a the http results have failed
      *
@@ -429,7 +447,7 @@ public abstract class WebServicesProvider<K, V> {
     public abstract void onHttpResultsFailed(String resultText, String client, String clientAction, String clientIntent, String build);
 
     /**
-     * AndroidWebServicesProvider#onHTTPResultsSuccessful
+     * AndroidHTTPSWebServicesProvider#onHTTPResultsSuccessful
      * <p>
      * Called when a the http results are successful
      *
@@ -442,7 +460,7 @@ public abstract class WebServicesProvider<K, V> {
     public abstract void onHttpResultsSuccessful(String resultText, String client, String clientAction, String clientIntent, String build) throws JSONException;
 
     /**
-     * AndroidWebServicesProvider#onHttpResultsAmbiguous
+     * AndroidHTTPSWebServicesProvider#onHttpResultsAmbiguous
      * <p>
      * Called when a the http results are ambiguous
      *
