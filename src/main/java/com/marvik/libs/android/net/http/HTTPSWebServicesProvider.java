@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownServiceException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,6 +21,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 
 public abstract class HTTPSWebServicesProvider<K, V> {
@@ -173,6 +177,45 @@ public abstract class HTTPSWebServicesProvider<K, V> {
      */
     public String getSentQuery() {
         return getQuery();
+    }
+
+    /**
+     * Get wrapped trust managers
+     * Returns the first
+     *
+     * @param trustManagers
+     * @return
+     */
+    protected TrustManager[] getWrappedTrustManagers(TrustManager[] trustManagers) {
+        if (trustManagers.length > 0) {
+            X509TrustManager originalTrustManager = (X509TrustManager) trustManagers[0];
+            return new TrustManager[]{new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    try {
+                        originalTrustManager.checkClientTrusted(chain, authType);
+                    } catch (CertificateException exception) {
+                        exception.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    try {
+                        originalTrustManager.checkServerTrusted(chain, authType);
+                    } catch (CertificateException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return originalTrustManager.getAcceptedIssuers();
+                }
+            }};
+        }
+        return null;
     }
 
     /**
