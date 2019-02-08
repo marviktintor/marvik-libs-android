@@ -24,6 +24,9 @@ import com.marvik.libs.android.activities.MasterActivity;
 
 public abstract class MasterFragment extends Fragment {
 
+    private View baseView;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +85,7 @@ public abstract class MasterFragment extends Fragment {
     public abstract int getLayout();
 
     public View getFragmentView(LayoutInflater layoutInflater, ViewGroup container) {
-        return layoutInflater.inflate(getLayout(), container, false);
+        return this.baseView = layoutInflater.inflate(getLayout(), container, false);
     }
 
     /**
@@ -160,4 +163,13 @@ public abstract class MasterFragment extends Fragment {
      * @return
      */
     protected abstract boolean hasOptionsMenu();
+
+    /**
+     * Return the base view which is inflated for this fragment
+     *
+     * @return
+     */
+    protected View getBaseView() {
+        return this.baseView;
+    }
 }
