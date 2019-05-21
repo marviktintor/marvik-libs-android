@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -549,7 +550,6 @@ public abstract class MasterActivity extends AppCompatActivity {
     public void showAlertDialog(Context context, String title, String message, String positiveButtonLabel,
                                 final Intent positiveIntent, String negativeButtonLabel, final Intent negativeIntent,
                                 boolean cancellable) {
-
         if (mAlert == null) {
             mAlert = new AlertDialog.Builder(context);
         }
