@@ -5,9 +5,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.marvik.libs.android.R;
-import com.marvik.libs.android.models.navigation.NavigationItems;
-
 /**
  * Project - android
  * Package - com.marvik.libs.android.views
