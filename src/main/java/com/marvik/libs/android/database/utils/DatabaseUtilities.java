@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.marvik.libs.android.BuildConfig;
+
 import java.util.Arrays;
 
 
@@ -46,7 +48,7 @@ public class DatabaseUtilities {
             }
         }
 
-        Log.i("WHERE_CLAUSE", "isExists(" + where + ")");
+        if (BuildConfig.DEBUG)   Log.i("WHERE_CLAUSE", "isExists(" + where + ")");
 
         Cursor cursor = getContext().getContentResolver().query(uri, null, where, null, null);
 
@@ -79,7 +81,7 @@ public class DatabaseUtilities {
             }
         }
 
-        Log.i("WHERE_CLAUSE", "getColumnsValues(" + where + ")");
+        if (BuildConfig.DEBUG)  Log.i("WHERE_CLAUSE", "getColumnsValues(" + where + ")");
 
         Cursor cursor = getContext().getContentResolver().query(uri, null, where, null, null);
 
