@@ -1,23 +1,19 @@
 package com.marvik.libs.android.net.http;
 
 
-import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownServiceException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -78,6 +74,8 @@ public abstract class HTTPSWebServicesProvider<K, V> {
     public static final String REQUEST_POST = "POST";
     public static final String REQUEST_PUT = "PUT";
     public static final String REQUEST_DELETE = "DELETE";
+
+    public static final String LINE_FEED = "\r\n";
 
     /**
      * Web services provide class that provides apis
@@ -362,79 +360,150 @@ public abstract class HTTPSWebServicesProvider<K, V> {
     }
 
 
-    protected boolean uploadFile(File file, URL url, HttpsURLConnection conn) throws IOException {
+    public String doMultipartFileUploads(Map<String, File> fileparams) throws IOException, JSONException {
+        String boundary = "===" + System.currentTimeMillis() + "===";
+        String dataStream = null;
 
+        if (getUrl() == null) {
+            onConnectionError(ERROR_TYPE_EMPTY_URL);
+            throw new IllegalArgumentException("URL Cannot be null");
+        }
 
-        String lineEnd = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "*****";
-        int bytesRead, bytesAvailable, bufferSize;
-        byte[] buffer;
-        int maxBufferSize = 1 * 1024 * 1024;
+        if (!isValidUrl(getUrl())) {
+            onConnectionError(ERROR_TYPE_INVALID_URL);
+            throw new IllegalArgumentException("Invalid URL [" + getUrl() + "]");
+        }
 
-            // open a URL connection to the Servlet
-            FileInputStream fileInputStream = new FileInputStream(file);
+        onStart();
 
+        URL url = new URL(getUrl());
+        HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
 
-            // Open a HTTP  connection to  the URL
-            conn = (HttpsURLConnection) url.openConnection();
-            conn.setDoInput(true); // Allow Inputs
-            conn.setDoOutput(true); // Allow Outputs
-            conn.setUseCaches(false); // Don't use a Cached Copy
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            conn.setRequestProperty("uploaded_file", file.getName());
+        httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
+        httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
 
-          DataOutputStream  dos = new DataOutputStream(conn.getOutputStream());
+        httpsURLConnection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name="+file.getName()+";filename="
-                            + file.getName() + "" + lineEnd);
-
-                    dos.writeBytes(lineEnd);
-
-            // create a buffer of  maximum size
-            bytesAvailable = fileInputStream.available();
-
-            bufferSize = Math.min(bytesAvailable, maxBufferSize);
-            buffer = new byte[bufferSize];
-
-            // read file and write it into form...
-            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-            while (bytesRead > 0) {
-
-                dos.write(buffer, 0, bufferSize);
-                bytesAvailable = fileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
+        if (getRequestProperties() != null) {
+            for (Map.Entry<K, V> entries : getRequestProperties().entrySet()) {
+                httpsURLConnection.setRequestProperty(String.valueOf(entries.getKey()), String.valueOf(entries.getValue()));
             }
+        }
 
-            // send multipart form data necesssary after file data...
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+        httpsURLConnection.setUseCaches(true);
+        httpsURLConnection.setDoOutput(true);
+        httpsURLConnection.setDoOutput(true);
+        httpsURLConnection.setRequestMethod(REQUEST_POST);
 
-            // Responses from the server (code and message)
-           int serverResponseCode = conn.getResponseCode();
-            String serverResponseMessage = conn.getResponseMessage();
+        OutputStream outputStream = httpsURLConnection.getOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 
-            Log.i("uploadFile", "HTTP Response is : "
-                    + serverResponseMessage + ": " + serverResponseCode);
+        Map<String, String> params = getUrlBuilder().getParams();
 
-            if(serverResponseCode == 200){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            writeMultipartTextData(writer, boundary, entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, File> entry : fileparams.entrySet()) {
+            writeMultipartFileData(outputStream, writer, boundary, entry.getKey(), entry.getValue());
+        }
+
+        outputStream.flush(); //TODO - Maybe close every time we push a file
+
+        writer.append(LINE_FEED).flush();
+        writer.append("--").append(boundary).append("--").append(LINE_FEED);
+        writer.flush();
+        writer.close();
+
+        onConnect(httpsURLConnection.getResponseCode());
+
+        InputStream inputStream = httpsURLConnection.getInputStream();
+
+        onReceiveResponse();
+
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        StringBuilder builder = new StringBuilder();
+
+        while ((dataStream = bufferedReader.readLine()) != null) {
+            onReadResponse(dataStream);
+
+            builder.append(dataStream);
+            onAppendResponse(builder.toString());
+        }
+
+        dataStream = builder.toString();
 
 
-            }
+        setHTTPResponse(dataStream);
 
-            //close the streams //
-            fileInputStream.close();
-            dos.flush();
-            dos.close();
+        onFinishedReadingResponse(dataStream);
 
-            return true;
+        onFinish();
+
+        return dataStream;
+    }
+
+    /**
+     * Write Multipart text data
+     *
+     * @param writer
+     * @param boundary
+     * @param key
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    private boolean writeMultipartTextData(OutputStreamWriter writer, String boundary, String key, String value) throws IOException {
+
+        writer.append("--").append(boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data;name=" + key).append(LINE_FEED);
+        writer.append("Content-Type: text/plain; charset=UTF-8").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.append(value).append(LINE_FEED);
+        writer.flush();
+
+        return true;
+    }
+
+    /**
+     * Write Multipart file data
+     *
+     * @param outputStream
+     * @param writer
+     * @param boundary
+     * @param key
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    private boolean writeMultipartFileData(OutputStream outputStream, OutputStreamWriter writer, String boundary, String key, File value) throws IOException {
+
+        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=" + key + "; filename=" + value.getName()).append(LINE_FEED);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(value.getName())).append(LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.flush();
+
+        FileInputStream fileInputStream = new FileInputStream(value);
+        int fileSize = fileInputStream.available();
+
+        byte[] buffer = new byte[fileSize];
+        int bytesRead = -1;
+
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+
+        fileInputStream.close();
+
+        writer.append(LINE_FEED);
+        writer.flush();
+
+        return true;
     }
 
     /**
@@ -615,4 +684,14 @@ public abstract class HTTPSWebServicesProvider<K, V> {
         this.httpResponse = httpResponse;
     }
 
+    /**
+     * Set URL Builder
+     *
+     * @param urlBuilder
+     * @return
+     */
+    public HTTPSWebServicesProvider setURLBuilder(URLBuilder urlBuilder) {
+        this.urlBuilder = urlBuilder;
+        return this;
+    }
 }
