@@ -10,12 +10,53 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 
-public final class Downloader {
+public abstract class Downloader {
 
     public static final String EXTRA_FILEPATH = "filepath";
+
+    private Context mContext;
+
+    public Downloader(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    /**
+     * Get SSL Socket Factory
+     *
+     * @return
+     */
+    protected abstract SSLSocketFactory getSSLSocketFactory();
+
+    /**
+     * Get host name verifier
+     *
+     * @return
+     */
+    protected abstract HostnameVerifier getHostNameVerifier();
+
+    /**
+     * Called when a successful connection has been created to the server
+     *
+     * @param statusCode
+     */
+    public abstract void onConnect(int statusCode);
+
+    /**
+     * Called when an error has occurred making a HTTP_CONNECTION
+     *
+     * @param errorCode
+     */
+    public abstract void onConnectionError(int errorCode);
 
     /**
      * Downloads a file
@@ -27,42 +68,55 @@ public final class Downloader {
      * @param overWrite
      * @param downloadIntent
      */
-    public static void downloadFile(final Context context, final String downloadURI, final String storeDir,
-                                    @Nullable String fileName, final boolean overWrite, final Intent downloadIntent) {
+    public void downloadFile(final Context context, final String downloadURI, final String storeDir,
+                             @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
 
         new Thread(() -> {
             try {
                 URL url = new URL(parseUrl(downloadURI));
-                URLConnection urlConnection = url.openConnection();
-                InputStream inputStream = urlConnection.getInputStream();
+                HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
 
-                File downloadFile = new File(storeDir + File.separator + fileName);
+                httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
+                httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
 
+                int responseCode = httpsURLConnection.getResponseCode();
 
-                int count = 0;
+                onConnect(responseCode);
 
-                byte[] buffer = new byte[1024];
+                if (responseCode == 200) {
+                    InputStream inputStream = httpsURLConnection.getInputStream();
 
-                File fileDir = new File(storeDir);
+                    File downloadFile = new File(storeDir + File.separator + fileName);
 
-                if (!fileDir.exists()) {
-                    fileDir.mkdirs();
-                }
+                    int count = 0;
 
-                if (!overWrite) {
-                    //Ensure that we do not always download existing files
-                    if (downloadFile.exists()) {
-                        return;
+                    byte[] buffer = new byte[1024];
+
+                    File fileDir = new File(storeDir);
+
+                    if (!fileDir.exists()) {
+                        fileDir.mkdirs();
                     }
+
+                    if (!overWrite) {
+                        //Ensure that we do not always download existing files
+                        if (downloadFile.exists()) {
+                            return;
+                        }
+                    }
+
+
+                    FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+
+                    while ((count = inputStream.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, count);
+                    }
+                    downloadIntent.putExtra(Downloader.EXTRA_FILEPATH, downloadFile.getAbsolutePath());
+                    context.sendBroadcast(downloadIntent);
+                } else {
+                    context.sendBroadcast(failedIntent);
                 }
 
-                FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
-
-                while ((count = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, count);
-                }
-                downloadIntent.putExtra(Downloader.EXTRA_FILEPATH, downloadFile.getAbsolutePath());
-                context.sendBroadcast(downloadIntent);
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
