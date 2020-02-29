@@ -136,6 +136,7 @@ public abstract class Downloader {
                     context.sendBroadcast(failedIntent);
                 }
 
+                httpsURLConnection.disconnect();
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -205,6 +206,7 @@ public abstract class Downloader {
                     context.sendBroadcast(failedIntent);
                 }
 
+                httpURLConnection.disconnect();
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();

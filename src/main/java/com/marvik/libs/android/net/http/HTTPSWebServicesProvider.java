@@ -353,6 +353,8 @@ public abstract class HTTPSWebServicesProvider<K, V> {
 
             onFinish();
 
+            httpsURLConnection.disconnect();
+
             return dataStream;
 
         } else {
@@ -414,12 +416,13 @@ public abstract class HTTPSWebServicesProvider<K, V> {
             writeMultipartFileData(outputStream, writer, boundary, entry.getKey(), entry.getValue());
         }
 
-        outputStream.flush(); //TODO - Maybe close every time we push a file
-
         writer.append(LINE_FEED).flush();
         writer.append("--").append(boundary).append("--").append(LINE_FEED);
         writer.flush();
         writer.close();
+
+        outputStream.flush();
+        outputStream.close();
 
         onConnect(httpsURLConnection.getResponseCode());
 
@@ -440,6 +443,8 @@ public abstract class HTTPSWebServicesProvider<K, V> {
             onAppendResponse(builder.toString());
         }
 
+        inputStream.close();
+
         dataStream = builder.toString();
 
 
@@ -448,6 +453,8 @@ public abstract class HTTPSWebServicesProvider<K, V> {
         onFinishedReadingResponse(dataStream);
 
         onFinish();
+
+        httpsURLConnection.disconnect();
 
         return dataStream;
     }
