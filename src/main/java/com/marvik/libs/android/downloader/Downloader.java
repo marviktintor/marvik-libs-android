@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -59,7 +60,22 @@ public abstract class Downloader {
     public abstract void onConnectionError(int errorCode);
 
     /**
-     * Downloads a file
+     * Set connection timeout
+     *
+     * @return
+     */
+    protected abstract int getCustomConnectionTimeout();
+
+    /**
+     * Set Read timeout
+     *
+     * @return
+     */
+    protected abstract int getCustomReadTimeout();
+
+
+    /**
+     * Downloads a file over a HTTPS Connection
      *
      * @param context
      * @param downloadURI
@@ -68,13 +84,16 @@ public abstract class Downloader {
      * @param overWrite
      * @param downloadIntent
      */
-    public void downloadFile(final Context context, final String downloadURI, final String storeDir,
-                             @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
+    public void downloadFileHttps(final Context context, final String downloadURI, final String storeDir,
+                                  @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
 
         new Thread(() -> {
             try {
                 URL url = new URL(parseUrl(downloadURI));
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+
+                httpsURLConnection.setConnectTimeout(getCustomConnectionTimeout());
+                httpsURLConnection.setReadTimeout(getCustomReadTimeout());
 
                 httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
                 httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
@@ -85,6 +104,75 @@ public abstract class Downloader {
 
                 if (responseCode == 200) {
                     InputStream inputStream = httpsURLConnection.getInputStream();
+
+                    File downloadFile = new File(storeDir + File.separator + fileName);
+
+                    int count = 0;
+
+                    byte[] buffer = new byte[1024];
+
+                    File fileDir = new File(storeDir);
+
+                    if (!fileDir.exists()) {
+                        fileDir.mkdirs();
+                    }
+
+                    if (!overWrite) {
+                        //Ensure that we do not always download existing files
+                        if (downloadFile.exists()) {
+                            return;
+                        }
+                    }
+
+
+                    FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+
+                    while ((count = inputStream.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, count);
+                    }
+                    downloadIntent.putExtra(Downloader.EXTRA_FILEPATH, downloadFile.getAbsolutePath());
+                    context.sendBroadcast(downloadIntent);
+                } else {
+                    context.sendBroadcast(failedIntent);
+                }
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+    }
+
+    /**
+     * Downloads a file over HTTP Connection
+     *
+     * @param context
+     * @param downloadURI
+     * @param storeDir
+     * @param fileName
+     * @param overWrite
+     * @param downloadIntent
+     */
+    public void downloadFileHttp(final Context context, final String downloadURI, final String storeDir,
+                                 @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
+
+        new Thread(() -> {
+            try {
+                URL url = new URL(parseUrl(downloadURI));
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+                httpURLConnection.setConnectTimeout(getCustomConnectionTimeout());
+                httpURLConnection.setReadTimeout(getCustomReadTimeout());
+
+                int responseCode = httpURLConnection.getResponseCode();
+
+                onConnect(responseCode);
+
+                if (responseCode == 200) {
+                    InputStream inputStream = httpURLConnection.getInputStream();
 
                     File downloadFile = new File(storeDir + File.separator + fileName);
 

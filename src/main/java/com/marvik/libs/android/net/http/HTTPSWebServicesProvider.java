@@ -261,6 +261,9 @@ public abstract class HTTPSWebServicesProvider<K, V> {
         HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
         httpsURLConnection.setRequestMethod(requestMethod);
 
+        httpsURLConnection.setConnectTimeout(getCustomConnectionTimeout());
+        httpsURLConnection.setReadTimeout(getCustomReadTimeout());
+
         httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
         httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
 
@@ -378,6 +381,9 @@ public abstract class HTTPSWebServicesProvider<K, V> {
 
         URL url = new URL(getUrl());
         HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+
+        httpsURLConnection.setConnectTimeout(getCustomConnectionTimeout());
+        httpsURLConnection.setReadTimeout(getCustomReadTimeout());
 
         httpsURLConnection.setSSLSocketFactory(getSSLSocketFactory());
         httpsURLConnection.setHostnameVerifier(getHostNameVerifier());
@@ -628,6 +634,20 @@ public abstract class HTTPSWebServicesProvider<K, V> {
      * @param errorCode
      */
     public abstract void onConnectionError(int errorCode);
+
+    /**
+     * Set connection timeout
+     *
+     * @return
+     */
+    protected abstract int getCustomConnectionTimeout();
+
+    /**
+     * Set Read timeout
+     *
+     * @return
+     */
+    protected abstract int getCustomReadTimeout();
 
     /**
      * AndroidHTTPSWebServicesProvider#onHTTPResultsFailed
