@@ -616,7 +616,12 @@ public abstract class HTTPSWebServicesProvider<K, V> {
         byte[] buffer = new byte[fileSize];
         int bytesRead = -1;
 
-        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+        if (fileSize > 0) {
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } else {
+            bytesRead = 0;
             outputStream.write(buffer, 0, bytesRead);
         }
 
