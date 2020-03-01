@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownServiceException;
@@ -364,8 +365,15 @@ public abstract class HTTPSWebServicesProvider<K, V> {
 
     }
 
-
-    public String doMultipartFileUploads(Map<String, File> fileparams) throws IOException, JSONException {
+    /**
+     * Do Multipart file upload over HTTPS
+     *
+     * @param fileparams
+     * @return
+     * @throws IOException
+     * @throws JSONException
+     */
+    public String doMultipartFileUploadsHttps(Map<String, File> fileparams) throws IOException, JSONException {
         String boundary = "===" + System.currentTimeMillis() + "===";
         String dataStream = null;
 
@@ -455,6 +463,107 @@ public abstract class HTTPSWebServicesProvider<K, V> {
         onFinish();
 
         httpsURLConnection.disconnect();
+
+        return dataStream;
+    }
+
+    /**
+     * Do multipart file upload over HTTP
+     *
+     * @param fileparams
+     * @return
+     * @throws IOException
+     * @throws JSONException
+     */
+    public String doMultipartFileUploadsHttp(Map<String, File> fileparams) throws IOException, JSONException {
+        String boundary = "===" + System.currentTimeMillis() + "===";
+        String dataStream = null;
+
+        if (getUrl() == null) {
+            onConnectionError(ERROR_TYPE_EMPTY_URL);
+            throw new IllegalArgumentException("URL Cannot be null");
+        }
+
+        if (!isValidUrl(getUrl())) {
+            onConnectionError(ERROR_TYPE_INVALID_URL);
+            throw new IllegalArgumentException("Invalid URL [" + getUrl() + "]");
+        }
+
+        onStart();
+
+        URL url = new URL(getUrl());
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+        httpURLConnection.setConnectTimeout(getCustomConnectionTimeout());
+        httpURLConnection.setReadTimeout(getCustomReadTimeout());
+
+        httpURLConnection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+        if (getRequestProperties() != null) {
+            for (Map.Entry<K, V> entries : getRequestProperties().entrySet()) {
+                httpURLConnection.setRequestProperty(String.valueOf(entries.getKey()), String.valueOf(entries.getValue()));
+            }
+        }
+
+        httpURLConnection.setUseCaches(true);
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setRequestMethod(REQUEST_POST);
+
+        OutputStream outputStream = httpURLConnection.getOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+
+        Map<String, String> params = getUrlBuilder().getParams();
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            writeMultipartTextData(writer, boundary, entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, File> entry : fileparams.entrySet()) {
+            writeMultipartFileData(outputStream, writer, boundary, entry.getKey(), entry.getValue());
+        }
+
+        writer.append(LINE_FEED).flush();
+        writer.append("--").append(boundary).append("--").append(LINE_FEED);
+        writer.flush();
+        writer.close();
+
+        outputStream.flush();
+        outputStream.close();
+
+        onConnect(httpURLConnection.getResponseCode());
+
+        InputStream inputStream = httpURLConnection.getInputStream();
+
+        onReceiveResponse();
+
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        StringBuilder builder = new StringBuilder();
+
+        while ((dataStream = bufferedReader.readLine()) != null) {
+            onReadResponse(dataStream);
+
+            builder.append(dataStream);
+            onAppendResponse(builder.toString());
+        }
+
+        bufferedReader.close();
+        inputStreamReader.close();
+        inputStream.close();
+
+        dataStream = builder.toString();
+
+
+        setHTTPResponse(dataStream);
+
+        onFinishedReadingResponse(dataStream);
+
+        onFinish();
+
+        httpURLConnection.disconnect();
 
         return dataStream;
     }
