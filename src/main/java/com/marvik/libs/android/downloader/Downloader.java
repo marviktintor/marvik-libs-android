@@ -77,14 +77,13 @@ public abstract class Downloader {
     /**
      * Downloads a file over a HTTPS Connection
      *
-     * @param context
      * @param downloadURI
      * @param storeDir
      * @param fileName
      * @param overWrite
      * @param downloadIntent
      */
-    public void downloadFileHttps(final Context context, final String downloadURI, final String storeDir,
+    public void downloadFileHttps(final String downloadURI, final String storeDir,
                                   @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
 
         new Thread(() -> {
@@ -131,9 +130,9 @@ public abstract class Downloader {
                         fileOutputStream.write(buffer, 0, count);
                     }
                     downloadIntent.putExtra(Downloader.EXTRA_FILEPATH, downloadFile.getAbsolutePath());
-                    context.sendBroadcast(downloadIntent);
+                    getContext().sendBroadcast(downloadIntent);
                 } else {
-                    context.sendBroadcast(failedIntent);
+                    getContext().sendBroadcast(failedIntent);
                 }
 
                 httpsURLConnection.disconnect();
@@ -150,14 +149,13 @@ public abstract class Downloader {
     /**
      * Downloads a file over HTTP Connection
      *
-     * @param context
      * @param downloadURI
      * @param storeDir
      * @param fileName
      * @param overWrite
      * @param downloadIntent
      */
-    public void downloadFileHttp(final Context context, final String downloadURI, final String storeDir,
+    public void downloadFileHttp(final String downloadURI, final String storeDir,
                                  @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
 
         new Thread(() -> {
@@ -201,9 +199,9 @@ public abstract class Downloader {
                         fileOutputStream.write(buffer, 0, count);
                     }
                     downloadIntent.putExtra(Downloader.EXTRA_FILEPATH, downloadFile.getAbsolutePath());
-                    context.sendBroadcast(downloadIntent);
+                    getContext().sendBroadcast(downloadIntent);
                 } else {
-                    context.sendBroadcast(failedIntent);
+                    getContext().sendBroadcast(failedIntent);
                 }
 
                 httpURLConnection.disconnect();
