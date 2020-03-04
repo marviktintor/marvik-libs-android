@@ -3,6 +3,9 @@ package com.marvik.libs.android.downloader;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.marvik.libs.android.BuildConfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -86,6 +89,11 @@ public abstract class Downloader {
     public void downloadFileHttps(final String downloadURI, final String storeDir,
                                   @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
 
+
+        if (BuildConfig.DEBUG) {
+            Log.i("DOWNLOADER", downloadURI);
+        }
+
         new Thread(() -> {
             try {
                 URL url = new URL(parseUrl(downloadURI));
@@ -157,6 +165,10 @@ public abstract class Downloader {
      */
     public void downloadFileHttp(final String downloadURI, final String storeDir,
                                  @Nullable String fileName, final boolean overWrite, final Intent downloadIntent, final Intent failedIntent) {
+
+        if (BuildConfig.DEBUG) {
+            Log.i("DOWNLOADER", downloadURI);
+        }
 
         new Thread(() -> {
             try {
