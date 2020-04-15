@@ -3,17 +3,17 @@ package com.marvik.libs.android.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
-* PreferencesManager 
-* 
-* Provides high level API's to quicky read and write preferences
-* @author Victor Mwenda <vmwenda.vm@gmail.com>
-*/
+ * PreferencesManager
+ * Provides low level generic API's to fast write and read from shared preferences
+ * https://github.com/victormwenda/marvik-libs-android/blob/master/src/main/java/com/marvik/libs/android/preferences/PreferencesManager.java
+ */
 public class PreferencesManager {
 
     private Context context;
@@ -48,9 +48,15 @@ public class PreferencesManager {
      * @param <T>
      */
     protected <T> void commit(String preference, T preferenceType) {
+
         if (preferenceType instanceof Boolean) {
             getEditor().putBoolean(preference, (Boolean) preferenceType);
         }
+
+        if (preferenceType instanceof Double) {
+            getEditor().putLong(preference, Double.doubleToRawLongBits((Double) preferenceType));
+        }
+
         if (preferenceType instanceof Float) {
             getEditor().putFloat(preference, (Float) preferenceType);
         }
@@ -62,14 +68,15 @@ public class PreferencesManager {
         }
         if (preferenceType instanceof String || preference == null) {
             getEditor().putString(preference, (String) preferenceType);
+
         }
         if (preferenceType instanceof HashSet) {
             getEditor().putStringSet(preference, (HashSet<String>) preferenceType);
+
         }
-        if (preferenceType == null) {
-            getEditor().putString(preference, (String) preferenceType);
-        }
+
         getEditor().commit();
+
     }
 
     /**
@@ -85,6 +92,9 @@ public class PreferencesManager {
         if (preferenceType == Boolean.class) {
             return (T) Boolean.valueOf(getSharedPreferences().getBoolean(preference, (Boolean) defaultValue));
 
+        }
+        if (preferenceType == Double.class) {
+            return (T) Double.valueOf(Double.longBitsToDouble(getSharedPreferences().getLong(preference, Double.doubleToRawLongBits((Double) defaultValue))));
         }
         if (preferenceType == Float.class) {
             return (T) Float.valueOf(getSharedPreferences().getFloat(preference, (Float) defaultValue));
